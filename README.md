@@ -10,7 +10,15 @@ __Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://u
 
 __Related Papers__:
 
-- [__Geometrically Constrained Trajectory Optimization for Multicopters__](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
+- [Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
+```
+@article{Wang2021GCOPTER,
+    title={Geometrically Constrained Trajectory Optimization for Multicopters},
+    author={Wang, Zhepei and Zhou, Xin and Xu, Chao and Gao, Fei},
+    journal={arXiv preprint arXiv:2103.00190},
+    year={2021}
+}
+```
 
 __Video__:
 
