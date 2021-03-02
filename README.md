@@ -15,8 +15,10 @@ __Related Papers__:
 __Video__:
 
 - Real-time robust SE(3) tasks
-<p align="center" href="https://zhepeiwang.github.io/pubs/ijrr_2021_sub_gcopter.mp4" target="blank">
-    <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
-</p>
+<a href="https://zhepeiwang.github.io/pubs/ijrr_2021_sub_gcopter.mp4" target="blank">
+    <p align="center">
+        <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
+    </p>
+</a>
 
 - More tasks powered by __GCOPTER__ will be released.
