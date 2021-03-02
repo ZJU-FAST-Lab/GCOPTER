@@ -29,7 +29,7 @@ __Video__:
     </p>
 </a>
 
-- More tasks powered by __GCOPTER__ will be released soon, including __dense dynamic obstacles__, __multicopter swarms__, and __large-scale drone racing__.
+- More tasks powered by __GCOPTER__ will be released, including __dense dynamic obstacles__, __multicopter swarms__, and __large-scale drone racing__.
 
 __Available Powerful Submodules__:
 - [SDLP](https://github.com/ZJU-FAST-Lab/SDLP): [Seidel's Algorithm](https://link.springer.com/article/10.1007/BF02574699) on Linear-Complexity Linear Programming for Computational Geometry.
