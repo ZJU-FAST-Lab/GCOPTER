@@ -23,7 +23,7 @@ __Related Paper__:
 __Video__:
 
 - Robust real-time SE(3) tasks: [youtube](https://youtu.be/pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/).
-<a href="https://zhepeiwang.github.io/pubs/ijrr_2021_sub_gcopter.mp4" target="blank">
+<a href="https://youtu.be/pQ4oSf1rdBU" target="blank">
     <p align="center">
         <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
     </p>
