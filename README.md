@@ -1,2 +1,22 @@
 # GCOPTER
-Geometrically Constrained Trajectory Optimization for Multicopters
+
+__GCOPTER__ is a versatile multicopter trajectory optimizer based on a sparse trajectory representation __MINCO__.
+
+- To be open-sourced.
+
+## 0. About
+
+__Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://ustfei.com/) from the [ZJU Fast Lab](http://zju-fast.com/).
+
+__Related Papers__:
+
+- [__Geometrically Constrained Trajectory Optimization for Multicopters__](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
+
+  If you use our code for your academic research, please cite the first related paper.
+
+__Video__:
+
+- Real-Time Robust SE(3) Tasks
+<a href="https://zhepeiwang.github.io/pubs/ijrr_2021_sub_gcopter.mp4" target="blank"><img src="misc/gcopter_se3task_cover.png" width="900" height="480" border="10" /></a>
+
+- More Tasks powered by GCOPTER will be released.
