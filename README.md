@@ -21,4 +21,4 @@ __Video__:
     </p>
 </a>
 
-- More tasks powered by __GCOPTER__ will be released.
+- More tasks powered by __GCOPTER__ will be released soon.
