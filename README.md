@@ -22,14 +22,14 @@ __Related Paper__:
 
 __Video__:
 
-- Robust real-time SE(3) tasks.
+- Robust real-time SE(3) tasks: [youtube](https://youtu.be/pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/).
 <a href="https://zhepeiwang.github.io/pubs/ijrr_2021_sub_gcopter.mp4" target="blank">
     <p align="center">
         <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- More tasks powered by __GCOPTER__ will be released soon.
+- More tasks powered by __GCOPTER__ will be released soon, including dense dynamic obstacles, multicopter swarms, and large-scale drone racing.
 
 __Available Powerful Submodules__:
 - [SDLP](https://github.com/ZJU-FAST-Lab/SDLP): [Seidel's Algorithm](https://link.springer.com/article/10.1007/BF02574699) on Linear-Complexity Linear Programming for Computational Geometry.
