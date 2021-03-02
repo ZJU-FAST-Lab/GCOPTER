@@ -30,3 +30,8 @@ __Video__:
 </a>
 
 - More tasks powered by __GCOPTER__ will be released soon.
+
+__Powerful Submodules__:
+- [SDLP](https://github.com/ZJU-FAST-Lab/SDLP): [Seidel's Algorithm](https://link.springer.com/article/10.1007/BF02574699) for Linear-Complexity Linear Programming for Computational Geometry.
+- [VertexEnumeration3D](https://github.com/ZJU-FAST-Lab/VertexEnumeration3D): Highly Efficient Vertex Enumeration for 3D Convex Polytopes (A Robust and Fast Substitute to [cddlib](https://github.com/cddlib/cddlib) in 3D).
+- [LBFGS-Lite](https://github.com/ZJU-FAST-Lab/LBFGS-Lite): An Easy-to-Use Header-Only L-BFGS Solver.
