@@ -1,6 +1,6 @@
 # GCOPTER
 
-__GCOPTER__ is a versatile multicopter trajectory optimizer built upon __MINCO__, a novel sparse trajectory representation.
+__GCOPTER__ is a versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation __MINCO__.
 
 - To be open-sourced.
 
