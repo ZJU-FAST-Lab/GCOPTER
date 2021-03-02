@@ -12,7 +12,7 @@ __Related Paper__:
 
 [Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
 ```
-@article{Wang2021GCOPTER,
+@article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
     author={Wang, Zhepei and Zhou, Xin and Xu, Chao and Gao, Fei},
     journal={arXiv preprint arXiv:2103.00190},
