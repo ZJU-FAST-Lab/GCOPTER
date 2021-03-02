@@ -12,8 +12,6 @@ __Related Papers__:
 
 - [__Geometrically Constrained Trajectory Optimization for Multicopters__](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
 
-  If you use our code for your academic research, please cite the first related paper.
-
 __Video__:
 
 - Real-Time Robust SE(3) Tasks
