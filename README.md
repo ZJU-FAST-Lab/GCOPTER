@@ -22,14 +22,14 @@ __Related Paper__:
 
 __Applications__:
 
-- Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/). (__Reported by IEEE Spectrum Website!__)
+- Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/). (__Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
 <a href="https://www.youtube.com/watch?v=pQ4oSf1rdBU" target="blank">
     <p align="center">
         <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Also Reported by IEEE Spectrum Website!__)
+- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Also Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
 <a href="https://www.youtube.com/watch?v=w5GDMpjAoVQ" target="blank">
     <p align="center">
         <img src="misc/gcopter_swarmtask_cover.png" width="600" height="337" />
