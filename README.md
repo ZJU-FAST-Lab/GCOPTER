@@ -6,7 +6,7 @@ __GCOPTER__ is a versatile multicopter trajectory optimizer built upon a novel s
 
 ## 0. About
 
-__Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://ustfei.com/) from the [ZJU FAST Lab](http://zju-fast.com/).
+__Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://ustfei.com/) from [ZJU FAST Lab](http://zju-fast.com/).
 
 __Related Paper__:
 
@@ -20,16 +20,30 @@ __Related Paper__:
 }
 ```
 
-__Video__:
+__Applications__:
 
-- Robust real-time SE(3) tasks: [youtube](https://youtu.be/pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/).
-<a href="https://youtu.be/pQ4oSf1rdBU" target="blank">
+- Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/).
+<a href="https://www.youtube.com/watch?v=pQ4oSf1rdBU" target="blank">
     <p align="center">
         <img src="misc/gcopter_se3task_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- More tasks powered by __GCOPTER__ will be released here, including __dense dynamic obstacle__, __multicopter swarms__, and __large-scale drone racing__.
+- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7).
+<a href="https://www.youtube.com/watch?v=w5GDMpjAoVQ" target="blank">
+    <p align="center">
+        <img src="misc/gcopter_swarmtask_cover.png" width="600" height="337" />
+    </p>
+</a>
+
+- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=kjSU2vXCXXg) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e).
+<a href="https://www.youtube.com/watch?v=kjSU2vXCXXg" target="blank">
+    <p align="center">
+        <img src="misc/gcopter_racingtask_cover.png" width="600" height="337" />
+    </p>
+</a>
+
+- More applications powered by __GCOPTER__ will be listed here.
 
 __Available Powerful Submodules__:
 - [SDLP](https://github.com/ZJU-FAST-Lab/SDLP): [Seidel's Algorithm](https://link.springer.com/article/10.1007/BF02574699) on Linear-Complexity Linear Programming for Computational Geometry.
