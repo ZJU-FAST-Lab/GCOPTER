@@ -4,7 +4,7 @@ __GCOPTER__ is a versatile multicopter trajectory optimizer built upon a novel s
 
 - To be open-sourced.
 
-## 0. About
+## About
 
 __Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://ustfei.com/) from [ZJU FAST Lab](http://zju-fast.com/).
 
@@ -20,7 +20,7 @@ __Related Paper__:
 }
 ```
 
-__Applications__:
+## Applications
 
 - Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/). (__Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
 <a href="https://www.youtube.com/watch?v=pQ4oSf1rdBU" target="blank">
@@ -45,7 +45,7 @@ __Applications__:
 
 - More applications powered by __GCOPTER__ will be listed here.
 
-__Available Powerful Submodules__:
+## Powerful Submodules
 - [SDLP](https://github.com/ZJU-FAST-Lab/SDLP): [Seidel's Algorithm](https://link.springer.com/article/10.1007/BF02574699) on Linear-Complexity Linear Programming for Computational Geometry.
 - [VertexEnumeration3D](https://github.com/ZJU-FAST-Lab/VertexEnumeration3D): Highly Efficient Vertex Enumeration for 3D Convex Polytopes (Outperforms [cddlib](https://github.com/cddlib/cddlib) in 3D).
 - [LBFGS-Lite](https://github.com/ZJU-FAST-Lab/LBFGS-Lite): An Easy-to-Use Header-Only L-BFGS Solver.
