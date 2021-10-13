@@ -36,7 +36,7 @@ __Related Paper__:
     </p>
 </a>
 
-- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in by [IEEE RAL](https://ieeexplore.ieee.org/document/9543598)!__)
+- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in [IEEE RAL](https://ieeexplore.ieee.org/document/9543598)!__)
 <a href="https://www.youtube.com/watch?v=oIqtN3zWIhM" target="blank">
     <p align="center">
         <img src="misc/gcopter_racingtask_cover.png" width="600" height="337" />
