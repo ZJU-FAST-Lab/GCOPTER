@@ -43,7 +43,14 @@ __Related Paper__:
     </p>
 </a>
 
-- More applications powered by __GCOPTER__ will be listed here.
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (Submitted to IEEE RAL)
+<a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank">
+    <p align="center">
+        <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
+    </p>
+</a>
+
+- More applications powered by __GCOPTER__ or __MINCO__ will be listed here.
 
 ## Powerful Submodules
 - [SDLP: Seidel's Algorithm](https://github.com/ZJU-FAST-Lab/SDLP) on Linear-Complexity Linear Programming for Computational Geometry.
