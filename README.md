@@ -36,14 +36,14 @@ __Related Paper__:
     </p>
 </a>
 
-- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in [IEEE RAL](https://ieeexplore.ieee.org/document/9543598)__)
+- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in [IEEE RA-L](https://ieeexplore.ieee.org/document/9543598)__)
 <a href="https://www.youtube.com/watch?v=oIqtN3zWIhM" target="blank">
     <p align="center">
         <img src="misc/gcopter_racingtask_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (Submitted to IEEE RAL)
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (Submitted to IEEE RA-L)
 <a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank">
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
