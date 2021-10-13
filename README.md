@@ -50,6 +50,13 @@ __Related Paper__:
     </p>
 </a>
 
+- Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (Submitted to IEEE ICRA)
+<a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank">
+    <p align="center">
+        <img src="misc/minco_formation_cover.png" width="600" height="337" />
+    </p>
+</a>
+
 - More applications powered by __GCOPTER__ or __MINCO__ will be listed here.
 
 ## Powerful Submodules
