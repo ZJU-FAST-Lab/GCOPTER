@@ -57,7 +57,7 @@ __Related Paper__:
     </p>
 </a>
 
-- There is a variety of applications powered by __GCOPTER__ or __MINCO__ not listed here, for example, [visibility-aware aerial tracking](https://arxiv.org/abs/2109.07111), [planning with nonlinear drag effects](https://arxiv.org/abs/2109.08403), etc.
+- A variety of applications powered by __GCOPTER__ or __MINCO__ are not listed here, for example, [visibility-aware aerial tracking](https://arxiv.org/abs/2109.07111), [planning with nonlinear drag effects](https://arxiv.org/abs/2109.08403), etc.
 
 ## Powerful Submodules
 - [SDLP: Seidel's Algorithm](https://github.com/ZJU-FAST-Lab/SDLP) on Linear-Complexity Linear Programming for Computational Geometry.
