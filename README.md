@@ -1,6 +1,6 @@
 # GCOPTER
 
-__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190.pdf).
+__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf).
 
 - To be open-sourced.
 
@@ -10,7 +10,7 @@ __Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://u
 
 __Related Paper__:
 
-[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
+[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190v2), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
 ```
 @article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
