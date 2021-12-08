@@ -1,6 +1,6 @@
 # GCOPTER
 
-__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). It supports __user-defined state-input constraints__ for multicopter dynamics involving __user-defined nonlinear drag effects__. For example, it handles avoidance of dynamic obstacles, restrictions on body rates, or even motor speeds.
+__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). __User-defined state-input constraints__ for multicopter dynamics involving __nonlinear drag effects__ are supported. For example, it handles avoidance of dynamic obstacles, restrictions on body rates, or even motor speeds.
 
 - To be open-sourced.
 
