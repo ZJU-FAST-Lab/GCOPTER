@@ -50,7 +50,7 @@ __Related Paper__:
     </p>
 </a>
 
-- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (Submitted to IEEE RA-L)
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (To appear in IEEE RA-L)
 <a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank">
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
