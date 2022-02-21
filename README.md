@@ -2,7 +2,7 @@
 
 __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported. For example, it handles avoidance of dynamic obstacles, restrictions on body rates, or even motor speeds.
 
-- To be open-sourced.
+- The project will be released in MIT license soon.
 
 ## About
 
@@ -10,7 +10,7 @@ __Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://u
 
 __Related Paper__:
 
-[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190v2), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Under Review.
+[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190v2), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in IEEE Transactions on Robotics (T-RO).
 ```
 @article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
