@@ -6,7 +6,7 @@ __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built
 
 * **Mar 11, 2022** - A minimal but non-trivial example for global kinodynamic planning is released. Modules for trajectory optimization, quadcopter dynamics with nonlinear drags, fast iterative region inflation for corridor generation, non-uniform MINCO (s=3), etc., are released.
 
-* **Plan** - __More examples are on the way__, including uniform/non-uniform MINCO (s=2,3,4), trajectory generation for tube-shaped and sphere-shaped corridors, local replanner, whole-body SE(3) planner, etc.
+* **Plan** - __More examples are on the way__, including uniform/non-uniform MINCO (s=2,3,4), trajectory generation for tube-shaped and sphere-shaped corridors, local replanner, whole-body SE(3) planner, interfaces for external constraints, augmented Lagrangian, and so on.
 
 ## About
 
