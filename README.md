@@ -1,6 +1,6 @@
-# GCOPTER
+# GCOPTER & MINCO
 
-__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported.
+__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported.
 
 ## Updates
 
@@ -16,7 +16,7 @@ __Author__: [Zhepei Wang](https://zhepeiwang.github.io) and [Fei Gao](https://sc
 
 __Related Paper__:
 
-[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in IEEE Transactions on Robotics (T-RO).
+[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in __IEEE Transactions on Robotics__(<em>T-RO</em>).
 ```
 @article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
@@ -48,7 +48,7 @@ After conduct the command, you will see the windows for rviz and rqt_plot. Pleas
 </p>
 The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decides the relative height. You can repeat choosing the start and goal to trigger the global planning. The solution trajectory considers spatial-temporal optimality and dynamics with drag effects. Some states for trajectories, like net thrust, tilt angle, body rate are all available. The magnitudes for some of them is shown in the rqt_plot. All corridor and trajectory generation are computed in real-time. Physical parameters in standard units are all modifiable in a config file. If you only wants point-mass model to achieve a faster computing, please modify the penalty-functional-relevant code.
 
-## Projects Supported by GCOPTER&MINCO
+## Projects Supported by GCOPTER or MINCO
 
 - Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/). (__Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
 <a href="https://www.youtube.com/watch?v=pQ4oSf1rdBU" target="blank">
