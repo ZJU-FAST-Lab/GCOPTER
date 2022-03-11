@@ -1,0 +1,24 @@
+<package>
+  <name>gcopter</name>
+  <author email="wangzhepei@live.com">Zhepei Wang</author>
+  <maintainer email="wangzhepei@live.com">Zhepei Wang</maintainer>
+  <version>0.1.0</version>
+  <description>
+      the gcopter package
+  </description>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  
+</package>

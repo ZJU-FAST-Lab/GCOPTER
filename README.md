@@ -1,16 +1,22 @@
 # GCOPTER
 
-__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported. For example, it handles avoidance of dynamic obstacles, restrictions on body rates, or even motor speeds.
+__GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190v2.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported.
 
-- The project will be released in __MIT license__ soon.
+## Updates
+
+* **Mar 11, 2022** - A minimal but non-trivial example for global kinodynamic planning is released. Modules for trajectory optimization, quadcopter dynamics with nonlinear drags, fast iterative region inflation for corridor generation, non-uniform MINCO (s=3), etc., are released.
+
+* **Plan** - __More examples are on the way__, including uniform/non-uniform MINCO (s=2,3,4), trajectory generation for tube-shaped and sphere-shaped corridors, local replanner, whole-body SE(3) planner, etc.
 
 ## About
 
-__Author__: [Zhepei Wang](https://zhepeiwang.github.io/) and [Fei Gao](https://ustfei.com/) from [ZJU FAST Lab](http://zju-fast.com/).
+If our source code are used in your academic projects, please cite our paper. Thank you!
+
+__Author__: [Zhepei Wang](https://zhepeiwang.github.io) and [Fei Gao](https://scholar.google.com/citations?hl=en&user=4RObDv0AAAAJ) from [ZJU FAST Lab](http://zju-fast.com).
 
 __Related Paper__:
 
-[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190v2), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in IEEE Transactions on Robotics (T-RO).
+[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in IEEE Transactions on Robotics (T-RO).
 ```
 @article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
@@ -21,6 +27,28 @@ __Related Paper__:
 ```
 
 ## Applications
+
+### Example 1: Global Trajectory Planning
+
+This is a minimal yet non-trivial example of our trajectory optimizer for real-time high-quality corridor and global trajectory generation subject to dynamic constraints. For installation, the following terminal commands are helpful.
+    
+    sudo apt update
+    sudo apt install cpufrequtils
+    sudo apt install libompl-dev
+    sudo cpufreq-set -g performance
+    mkdir ROS; cd ROS; mkdir src; cd src
+    git clone https://github.com/ZJU-FAST-Lab/GCOPTER.git
+    cd ..
+    catkin_make
+    roslaunch gcopter global_planning.launch
+
+After conduct the command, you will see the windows for rviz and rqt_plot. Please follow gif below for global trajectory planning in the random map.
+<p align="center">
+    <img src="misc/global_planning_demo.gif" width="540" height="366" />
+</p>
+The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decides the relative height. You can repeat choosing the start and goal to trigger the global planning. The solution trajectory considers spatial-temporal optimality and dynamics with drag effects. Some states for trajectories, like net thrust, tilt angle, body rate are all available. The magnitudes for some of them is shown in the rqt_plot. All corridor and trajectory generation are computed in real-time. Physical parameters in standard units are all modifiable in a config file. If you only wants point-mass model to achieve a faster computing, please modify the penalty-functional-relevant code.
+
+## Projects Supported by GCOPTER&MINCO
 
 - Robust Real-Time SE(3) Planning: [youtube](https://www.youtube.com/watch?v=pQ4oSf1rdBU) or [bilibili](https://www.bilibili.com/video/BV1bb4y1X7VE/). (__Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
 <a href="https://www.youtube.com/watch?v=pQ4oSf1rdBU" target="blank">
