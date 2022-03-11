@@ -42,54 +42,6 @@
 namespace firi
 {
 
-    inline Eigen::Vector3d origin2Triangle(const Eigen::Vector3d &a,
-                                           const Eigen::Vector3d &b,
-                                           const Eigen::Vector3d &c)
-    {
-        const Eigen::Vector3d ab = b - a;
-        const Eigen::Vector3d ac = c - a;
-        const double d1 = ab.dot(a);
-        const double d2 = ac.dot(a);
-        if (!(d1 < 0.0 || d2 < 0.0))
-        {
-            return a;
-        }
-
-        const double d3 = ab.dot(b);
-        const double d4 = ac.dot(b);
-        if (!(d3 > 0.0 || d4 < d3))
-        {
-            return b;
-        }
-
-        const double vc = d1 * d4 - d3 * d2;
-        if (!(vc > 0.0 || d1 > 0.0 || d3 < 0.0))
-        {
-            return a + ab * d1 / (d1 - d3);
-        }
-
-        const double d5 = ab.dot(c);
-        const double d6 = ac.dot(c);
-        if (!(d6 > 0.0 || d5 < d6))
-        {
-            return c;
-        }
-
-        const double vb = d5 * d2 - d1 * d6;
-        if (!(vb > 0.0 || d2 > 0.0 || d6 < 0.0))
-        {
-            return a + ac * d2 / (d2 - d6);
-        }
-
-        const double va = d3 * d6 - d5 * d4;
-        if (!(va > 0.0 || (d4 - d3) > 0.0 || (d5 - d6) > 0.0))
-        {
-            return b + (c - b) * (d4 - d3) / ((d4 - d3) + (d5 - d6));
-        }
-
-        return a + (ab * vb + ac * vc) / (va + vb + vc);
-    }
-
     inline void chol3d(const Eigen::Matrix3d &A,
                        Eigen::Matrix3d &L)
     {
