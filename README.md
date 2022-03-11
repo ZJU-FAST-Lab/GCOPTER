@@ -1,4 +1,4 @@
-# GCOPTER & MINCO
+# GCOPTER
 
 __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190.pdf). __User-defined state-input constraints__ for dynamics involving __nonlinear drag effects__ are supported.
 
@@ -14,9 +14,7 @@ If our source code are used in your academic projects, please cite our paper. Th
 
 __Author__: [Zhepei Wang](https://zhepeiwang.github.io) and [Fei Gao](https://scholar.google.com/citations?hl=en&user=4RObDv0AAAAJ) from [ZJU FAST Lab](http://zju-fast.com).
 
-__Related Paper__:
-
-[Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in <em>IEEE Transactions on Robotics</em>(__T-RO__).
+__Paper__: [Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in <em>IEEE Transactions on Robotics</em> (__T-RO__).
 ```
 @article{WANG2021GCOPTER,
     title={Geometrically Constrained Trajectory Optimization for Multicopters},
@@ -40,13 +38,14 @@ This is a minimal yet non-trivial example of our trajectory optimizer for real-t
     git clone https://github.com/ZJU-FAST-Lab/GCOPTER.git
     cd ..
     catkin_make
+    source devel/setup.bash
     roslaunch gcopter global_planning.launch
 
-After conduct the command, you will see the windows for rviz and rqt_plot. Please follow gif below for global trajectory planning in the random map.
+After conduct the command, you will see the windows for rviz and rqt_plot. Please follow the gif below for global trajectory planning in a random map.
 <p align="center">
-    <img src="misc/global_planning_demo.gif" width="540" height="366" />
+    <img src="misc/application1_global_planning.gif" width="600" height="407" />
 </p>
-The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decides the relative height. You can repeat choosing the start and goal to trigger the global planning. The solution trajectory considers spatial-temporal optimality and dynamics with drag effects. Some states for trajectories, like net thrust, tilt angle, body rate are all available. The magnitudes for some of them is shown in the rqt_plot. All corridor and trajectory generation are computed in real-time. Physical parameters in standard units are all modifiable in a config file. If you only wants point-mass model to achieve a faster computing, please modify the penalty-functional-relevant code.
+The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decides the relative height. You can repeat choosing the start and goal to trigger the global planning. The solution trajectory considers spatial-temporal optimality and vehicle dynamics with drag effects. Some states for trajectories, like net thrust, tilt angle, body rate are all available. The magnitudes for some of them are shown in the rqt_plot. Corridor and trajectory generation are computed in real-time. Physical parameters in standard units are all modifiable in a config file. If you only wants a point-mass model to achieve a faster computing, please modify the penalty-functional-relevant code.
 
 ## Projects Supported by GCOPTER or MINCO
 
