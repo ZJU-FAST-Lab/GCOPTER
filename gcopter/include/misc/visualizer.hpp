@@ -57,7 +57,8 @@ public:
     }
 
     // Visualize the trajectory and its front-end path
-    inline void visualize(const Trajectory &traj,
+    template <int D>
+    inline void visualize(const Trajectory<D> &traj,
                           const std::vector<Eigen::Vector3d> &route)
     {
         visualization_msgs::Marker routeMarker, wayPointsMarker, trajMarker;

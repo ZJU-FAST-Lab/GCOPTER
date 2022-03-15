@@ -806,7 +806,7 @@ namespace gcopter
             return true;
         }
 
-        inline double optimize(Trajectory &traj,
+        inline double optimize(Trajectory<5> &traj,
                                const double &relCostTol)
         {
             Eigen::VectorXd x(temporalDim + spatialDim);

@@ -34,12 +34,14 @@
 #include <cfloat>
 #include <vector>
 
-typedef Eigen::Matrix<double, 3, 6> CoefficientMat;
-typedef Eigen::Matrix<double, 3, 5> VelCoefficientMat;
-typedef Eigen::Matrix<double, 3, 4> AccCoefficientMat;
-
+template <int D>
 class Piece
 {
+public:
+    typedef Eigen::Matrix<double, 3, D + 1> CoefficientMat;
+    typedef Eigen::Matrix<double, 3, D> VelCoefficientMat;
+    typedef Eigen::Matrix<double, 3, D - 1> AccCoefficientMat;
+
 private:
     double duration;
     CoefficientMat coeffMat;
@@ -55,9 +57,9 @@ public:
         return 3;
     }
 
-    inline int getOrder() const
+    inline int getDegree() const
     {
-        return 5;
+        return D;
     }
 
     inline double getDuration() const
@@ -74,7 +76,7 @@ public:
     {
         Eigen::Vector3d pos(0.0, 0.0, 0.0);
         double tn = 1.0;
-        for (int i = 5; i >= 0; i--)
+        for (int i = D; i >= 0; i--)
         {
             pos += tn * coeffMat.col(i);
             tn *= t;
@@ -87,7 +89,7 @@ public:
         Eigen::Vector3d vel(0.0, 0.0, 0.0);
         double tn = 1.0;
         int n = 1;
-        for (int i = 4; i >= 0; i--)
+        for (int i = D - 1; i >= 0; i--)
         {
             vel += n * tn * coeffMat.col(i);
             tn *= t;
@@ -102,7 +104,7 @@ public:
         double tn = 1.0;
         int m = 1;
         int n = 2;
-        for (int i = 3; i >= 0; i--)
+        for (int i = D - 2; i >= 0; i--)
         {
             acc += m * n * tn * coeffMat.col(i);
             tn *= t;
@@ -119,7 +121,7 @@ public:
         int l = 1;
         int m = 2;
         int n = 3;
-        for (int i = 2; i >= 0; i--)
+        for (int i = D - 3; i >= 0; i--)
         {
             jer += l * m * n * tn * coeffMat.col(i);
             tn *= t;
@@ -134,7 +136,7 @@ public:
     {
         CoefficientMat nPosCoeffsMat;
         double t = 1.0;
-        for (int i = 5; i >= 0; i--)
+        for (int i = D; i >= 0; i--)
         {
             nPosCoeffsMat.col(i) = coeffMat.col(i) * t;
             t *= duration;
@@ -147,7 +149,7 @@ public:
         VelCoefficientMat nVelCoeffMat;
         int n = 1;
         double t = duration;
-        for (int i = 4; i >= 0; i--)
+        for (int i = D - 1; i >= 0; i--)
         {
             nVelCoeffMat.col(i) = n * coeffMat.col(i) * t;
             t *= duration;
@@ -162,7 +164,7 @@ public:
         int n = 2;
         int m = 1;
         double t = duration * duration;
-        for (int i = 3; i >= 0; i--)
+        for (int i = D - 2; i >= 0; i--)
         {
             nAccCoeffMat.col(i) = n * m * coeffMat.col(i) * t;
             n++;
@@ -312,17 +314,18 @@ public:
     }
 };
 
+template <int D>
 class Trajectory
 {
 private:
-    typedef std::vector<Piece> Pieces;
+    typedef std::vector<Piece<D>> Pieces;
     Pieces pieces;
 
 public:
     Trajectory() = default;
 
     Trajectory(const std::vector<double> &durs,
-               const std::vector<CoefficientMat> &cMats)
+               const std::vector<typename Piece<D>::CoefficientMat> &cMats)
     {
         int N = std::min(durs.size(), cMats.size());
         pieces.reserve(N);
@@ -365,18 +368,18 @@ public:
         Eigen::Matrix3Xd positions(3, N + 1);
         for (int i = 0; i < N; i++)
         {
-            positions.col(i) = pieces[i].getCoeffMat().col(5);
+            positions.col(i) = pieces[i].getCoeffMat().col(D);
         }
         positions.col(N) = pieces[N - 1].getPos(pieces[N - 1].getDuration());
         return positions;
     }
 
-    inline const Piece &operator[](int i) const
+    inline const Piece<D> &operator[](int i) const
     {
         return pieces[i];
     }
 
-    inline Piece &operator[](int i)
+    inline Piece<D> &operator[](int i)
     {
         return pieces[i];
     }
@@ -387,22 +390,22 @@ public:
         return;
     }
 
-    inline Pieces::const_iterator begin() const
+    inline typename Pieces::const_iterator begin() const
     {
         return pieces.begin();
     }
 
-    inline Pieces::const_iterator end() const
+    inline typename Pieces::const_iterator end() const
     {
         return pieces.end();
     }
 
-    inline Pieces::iterator begin()
+    inline typename Pieces::iterator begin()
     {
         return pieces.begin();
     }
 
-    inline Pieces::iterator end()
+    inline typename Pieces::iterator end()
     {
         return pieces.end();
     }
@@ -413,20 +416,20 @@ public:
         return;
     }
 
-    inline void emplace_back(const Piece &piece)
+    inline void emplace_back(const Piece<D> &piece)
     {
         pieces.emplace_back(piece);
         return;
     }
 
     inline void emplace_back(const double &dur,
-                             const CoefficientMat &cMat)
+                             const typename Piece<D>::CoefficientMat &cMat)
     {
         pieces.emplace_back(dur, cMat);
         return;
     }
 
-    inline void append(const Trajectory &traj)
+    inline void append(const Trajectory<D> &traj)
     {
         pieces.insert(pieces.end(), traj.begin(), traj.end());
         return;
@@ -480,7 +483,7 @@ public:
     {
         if (juncIdx != getPieceNum())
         {
-            return pieces[juncIdx].getCoeffMat().col(5);
+            return pieces[juncIdx].getCoeffMat().col(D);
         }
         else
         {
@@ -492,7 +495,7 @@ public:
     {
         if (juncIdx != getPieceNum())
         {
-            return pieces[juncIdx].getCoeffMat().col(4);
+            return pieces[juncIdx].getCoeffMat().col(D - 1);
         }
         else
         {
@@ -504,7 +507,7 @@ public:
     {
         if (juncIdx != getPieceNum())
         {
-            return pieces[juncIdx].getCoeffMat().col(3) * 2.0;
+            return pieces[juncIdx].getCoeffMat().col(D - 2) * 2.0;
         }
         else
         {

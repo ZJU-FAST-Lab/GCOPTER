@@ -86,7 +86,7 @@ private:
     Visualizer visualizer;
     std::vector<Eigen::Vector3d> startGoal;
 
-    Trajectory traj;
+    Trajectory<5> traj;
     double trajStamp;
 
 public:
