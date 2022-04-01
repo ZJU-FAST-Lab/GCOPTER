@@ -306,7 +306,7 @@ public:
         sphereMarkers.scale.z = radius * 2.0;
 
         sphereDeleter = sphereMarkers;
-        sphereDeleter.action = visualization_msgs::Marker::DELETE;
+        sphereDeleter.action = visualization_msgs::Marker::DELETEALL;
 
         geometry_msgs::Point point;
         point.x = center(0);
@@ -316,10 +316,9 @@ public:
 
         if (sg == 0)
         {
-            sphereDeleter.id = 0;
             spherePub.publish(sphereDeleter);
-            sphereDeleter.id = 1;
-            spherePub.publish(sphereDeleter);
+            ros::Duration(1.0e-9).sleep();
+            sphereMarkers.header.stamp = ros::Time::now();
         }
         spherePub.publish(sphereMarkers);
     }

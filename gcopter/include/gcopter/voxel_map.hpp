@@ -154,6 +154,7 @@ namespace voxel_map
                                       bounds(0), bounds(1), bounds(2),
                                       check, voxels, idx, Dilated, cvec)
                     }
+                    lvec.clear();
                 }
 
                 surf = cvec;

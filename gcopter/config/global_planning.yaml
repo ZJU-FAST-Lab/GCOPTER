@@ -34,7 +34,7 @@ SpeedEps:                   0.0001
 
 WeightT:                    20.0
 
-ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4]
+ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5]
 
 SmoothingEps:               1.0e-2
 

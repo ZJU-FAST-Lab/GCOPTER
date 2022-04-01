@@ -192,6 +192,7 @@ public:
                 penaltyWeights(1) = (config.chiVec)[1];
                 penaltyWeights(2) = (config.chiVec)[2];
                 penaltyWeights(3) = (config.chiVec)[3];
+                penaltyWeights(4) = (config.chiVec)[4];
                 physicalParams(0) = config.vehicleMass;
                 physicalParams(1) = config.gravAcc;
                 physicalParams(2) = config.horizDrag;
@@ -288,7 +289,7 @@ public:
                 double tiltangle = acos(1.0 - 2.0 * (quat(1) * quat(1) + quat(2) * quat(2)));
                 std_msgs::Float64 speedMsg, thrMsg, tiltMsg, bdrMsg;
                 speedMsg.data = speed;
-                thrMsg.data = thr / physicalParams(0);
+                thrMsg.data = thr;
                 tiltMsg.data = tiltangle;
                 bdrMsg.data = bodyratemag;
                 visualizer.speedPub.publish(speedMsg);
