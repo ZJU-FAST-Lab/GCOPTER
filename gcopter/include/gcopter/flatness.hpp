@@ -31,7 +31,7 @@
 
 namespace flatness
 {
-    class FlatnessMap
+    class FlatnessMap  // See https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf
     {
     public:
         inline void reset(const double &vehicle_mass,
