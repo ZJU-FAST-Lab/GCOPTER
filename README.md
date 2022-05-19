@@ -85,7 +85,7 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
     </p>
 </a>
 
-- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (IEEE RA-L)
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (__Published in [IEEE RA-L](https://doi.org/10.1109/LRA.2022.3153898))
 <a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank"> [Code](https://github.com/ZJU-FAST-Lab/GPA-Teleoperation)
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
