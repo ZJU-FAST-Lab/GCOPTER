@@ -71,14 +71,14 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
     </p>
 </a>
 
-- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Also Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__)
+- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Also Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__) [Code](https://github.com/ZJU-FAST-Lab/EGO-Planner-v2)
 <a href="https://www.youtube.com/watch?v=w5GDMpjAoVQ" target="blank">
     <p align="center">
         <img src="misc/gcopter_swarmtask_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in [IEEE RA-L](https://ieeexplore.ieee.org/document/9543598)__)
+- Long-Distance Drone Racing Planning: [youtube](https://www.youtube.com/watch?v=oIqtN3zWIhM) or [bilibili](https://www.bilibili.com/video/BV1sq4y1779e). (__Published in [IEEE RA-L](https://ieeexplore.ieee.org/document/9543598)__) [Code](https://github.com/ZJU-FAST-Lab/Fast-Racing)
 <a href="https://www.youtube.com/watch?v=oIqtN3zWIhM" target="blank">
     <p align="center">
         <img src="misc/gcopter_racingtask_cover.png" width="600" height="337" />
@@ -86,14 +86,14 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
 </a>
 
 - Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (IEEE RA-L)
-<a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank">
+<a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank"> [Code](https://github.com/ZJU-FAST-Lab/GPA-Teleoperation)
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
     </p>
 </a>
 
 - Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (IEEE ICRA)
-<a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank">
+<a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank"> [Code](https://github.com/ZJU-FAST-Lab/Swarm-Formation)
     <p align="center">
         <img src="misc/minco_formation_cover.png" width="600" height="337" />
     </p>
