@@ -14,7 +14,7 @@ __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built
 
 ## About
 
-If our source code are used in your academic projects, please cite our paper. Thank you!
+If our repo helps your academic projects, please cite our paper. Thank you!
 
 __Author__: [Zhepei Wang](https://zhepeiwang.github.io) and [Fei Gao](https://scholar.google.com/citations?hl=en&user=4RObDv0AAAAJ) from [ZJU FAST Lab](http://zju-fast.com).
 
