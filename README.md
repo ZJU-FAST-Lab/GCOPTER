@@ -85,14 +85,14 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
     </p>
 </a>
 
-- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (To appear in IEEE RA-L)
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (IEEE RA-L)
 <a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank">
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (Submitted to IEEE ICRA)
+- Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (IEEE ICRA)
 <a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank">
     <p align="center">
         <img src="misc/minco_formation_cover.png" width="600" height="337" />
