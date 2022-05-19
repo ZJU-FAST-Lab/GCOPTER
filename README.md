@@ -18,13 +18,17 @@ If our repo helps your academic projects, please cite our paper. Thank you!
 
 __Author__: [Zhepei Wang](https://zhepeiwang.github.io) and [Fei Gao](https://scholar.google.com/citations?hl=en&user=4RObDv0AAAAJ) from [ZJU FAST Lab](http://zju-fast.com).
 
-__Paper__: [Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, Accepted as regular paper in <em>IEEE Transactions on Robotics</em> (__T-RO__).
+__Paper__: [Geometrically Constrained Trajectory Optimization for Multicopters](https://arxiv.org/abs/2103.00190), Zhepei Wang, Xin Zhou, Chao Xu, and Fei Gao, <em>[IEEE Transactions on Robotics](https://doi.org/10.1109/TRO.2022.3160022)</em> (__T-RO__), Regular Paper.
 ```
-@article{WANG2021GCOPTER,
-    title={Geometrically Constrained Trajectory Optimization for Multicopters},
-    author={Wang, Zhepei and Zhou, Xin and Xu, Chao and Gao, Fei},
-    journal={arXiv preprint arXiv:2103.00190},
-    year={2021}
+@article{WANG2022GCOPTER,
+    title={Geometrically Constrained Trajectory Optimization for Multicopters}, 
+    author={Wang, Zhepei and Zhou, Xin and Xu, Chao and Gao, Fei}, 
+    journal={IEEE Transactions on Robotics}, 
+    year={2022}, 
+    volume={}, 
+    number={}, 
+    pages={1-20}, 
+    doi={10.1109/TRO.2022.3160022}
 }
 ```
 
