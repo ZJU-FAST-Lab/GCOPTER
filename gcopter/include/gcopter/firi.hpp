@@ -339,9 +339,14 @@ namespace firi
             nH = 0;
 
             bool completed = false;
-            int bdMinId, pcMinId;
+            int bdMinId;
             double minSqrD = distDs.minCoeff(&bdMinId);
-            double minSqrR = distRs.minCoeff(&pcMinId);
+            double minSqrR = INFINITY;
+            int pcMinId = 0;
+            if (distRs.cols() == 0)
+            {
+                minSqrR = distRs.minCoeff(&pcMinId);
+            }
             for (int i = 0; !completed && i < (M + N); ++i)
             {
                 if (minSqrD < minSqrR)
