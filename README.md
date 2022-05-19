@@ -8,7 +8,7 @@ __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built
 
 * **Mar 15, 2022** - Released non-uniform MINCO for s=2 and s=4.
 
-* **May 19, 2022** - Released a doc to detail [differential flatness for multicopters under nonlinear drag effects](https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf).
+* **May 19, 2022** - Released a doc to detail [differential flatness for multicopters under nonlinear drag effects](https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf). Add code links for all projects powered by MINCO.
 
 * **Plan** - __More examples are on the way__, including uniform MINCO (s=2,3,4), trajectory generation for tube-shaped and sphere-shaped corridors, local replanner, whole-body SE(3) planner, interfaces for external constraints, augmented Lagrangian, and so on.
 
