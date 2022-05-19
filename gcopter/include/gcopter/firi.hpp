@@ -344,8 +344,6 @@ namespace firi
             double minSqrR = distRs.minCoeff(&pcMinId);
             for (int i = 0; !completed && i < (M + N); ++i)
             {
-                bdMinId = bdMinId;
-                pcMinId = pcMinId;
                 if (minSqrD < minSqrR)
                 {
                     forwardH.block<1, 3>(nH, 0) = forwardB.row(bdMinId);
