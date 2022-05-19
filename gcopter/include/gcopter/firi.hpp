@@ -339,11 +339,10 @@ namespace firi
             nH = 0;
 
             bool completed = false;
-            int bdMinId;
+            int bdMinId = 0, pcMinId = 0;
             double minSqrD = distDs.minCoeff(&bdMinId);
             double minSqrR = INFINITY;
-            int pcMinId = 0;
-            if (distRs.cols() == 0)
+            if (distRs.size() != 0)
             {
                 minSqrR = distRs.minCoeff(&pcMinId);
             }
