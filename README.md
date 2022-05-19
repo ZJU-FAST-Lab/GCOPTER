@@ -71,7 +71,7 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
     </p>
 </a>
 
-- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Also Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__) [Code](https://github.com/ZJU-FAST-Lab/EGO-Planner-v2)
+- Multicopter Swarms Planning: [youtube](https://www.youtube.com/watch?v=w5GDMpjAoVQ) or [bilibili](https://www.bilibili.com/video/BV1gK4y1g7F7). (__Reported by [IEEE Spectrum Website](https://spectrum.ieee.org/)!__) [Code](https://github.com/ZJU-FAST-Lab/EGO-Planner-v2)
 <a href="https://www.youtube.com/watch?v=w5GDMpjAoVQ" target="blank">
     <p align="center">
         <img src="misc/gcopter_swarmtask_cover.png" width="600" height="337" />
