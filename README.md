@@ -85,15 +85,15 @@ The angle between the arrow of 2D Nav Goal and positive x-axis (red axis) decide
     </p>
 </a>
 
-- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (__Published in [IEEE RA-L](https://doi.org/10.1109/LRA.2022.3153898))
-<a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank"> [Code](https://github.com/ZJU-FAST-Lab/GPA-Teleoperation)
+- Gaze Teleoperation Planning: [youtube](https://www.youtube.com/watch?v=WYujLePQwB8) or [bilibili](https://www.bilibili.com/video/BV1Yf4y1P74v). (__Published in [IEEE RA-L](https://doi.org/10.1109/LRA.2022.3153898)__) [Code](https://github.com/ZJU-FAST-Lab/GPA-Teleoperation)
+<a href="https://www.youtube.com/watch?v=WYujLePQwB8" target="blank"> 
     <p align="center">
         <img src="misc/minco_gazetele_cover.png" width="600" height="337" />
     </p>
 </a>
 
-- Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (IEEE ICRA)
-<a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank"> [Code](https://github.com/ZJU-FAST-Lab/Swarm-Formation)
+- Formation Keeping Planning: [youtube](https://www.youtube.com/watch?v=lFumt0rJci4) or [bilibili](https://www.bilibili.com/video/BV1qv41137Si). (IEEE ICRA) [Code](https://github.com/ZJU-FAST-Lab/Swarm-Formation)
+<a href="https://www.youtube.com/watch?v=lFumt0rJci4" target="blank"> 
     <p align="center">
         <img src="misc/minco_formation_cover.png" width="600" height="337" />
     </p>
