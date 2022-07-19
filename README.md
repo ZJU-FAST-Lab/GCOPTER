@@ -4,6 +4,8 @@ __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built
 
 ## Updates
 
+* **July 20, 2022** - Released my thesis in chinese with detailed and up-to-dated methodology about corridor generation, multicopter dynamics, trajectory planning, and so on.
+
 * **Mar 11, 2022** - A minimal but non-trivial example for global kinodynamic planning is released. Modules for trajectory optimization, quadcopter dynamics with nonlinear drags, [fast iterative region inflation for corridor generation](https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/gcopter/include/gcopter/firi.hpp), non-uniform MINCO (s=3), etc., are released.
 
 * **Mar 15, 2022** - Released non-uniform MINCO for s=2 and s=4.
