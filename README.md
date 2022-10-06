@@ -27,9 +27,9 @@ __Paper__: [Geometrically Constrained Trajectory Optimization for Multicopters](
     author={Wang, Zhepei and Zhou, Xin and Xu, Chao and Gao, Fei}, 
     journal={IEEE Transactions on Robotics}, 
     year={2022}, 
-    volume={}, 
-    number={}, 
-    pages={1-20}, 
+    volume={38}, 
+    number={5}, 
+    pages={3259-3278}, 
     doi={10.1109/TRO.2022.3160022}
 }
 ```
