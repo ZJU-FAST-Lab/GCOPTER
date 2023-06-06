@@ -87,7 +87,7 @@ namespace firi
                            const Eigen::VectorXd &x,
                            Eigen::VectorXd &grad)
     {
-        const int *pM = (int *)data;
+        const int64_t *pM = (int64_t *)data;
         const double *pSmoothEps = (double *)(pM + 1);
         const double *pPenaltyWt = pSmoothEps + 1;
         const double *pA = pPenaltyWt + 1;
@@ -184,8 +184,8 @@ namespace firi
         const Eigen::Vector3d interior = xlp.head<3>();
 
         // Prepare the data for MVIE optimization
-        uint8_t *optData = new uint8_t[sizeof(int) + (2 + 3 * M) * sizeof(double)];
-        int *pM = (int *)optData;
+        uint8_t *optData = new uint8_t[sizeof(int64_t) + (2 + 3 * M) * sizeof(double)];
+        int64_t *pM = (int64_t *)optData;
         double *pSmoothEps = (double *)(pM + 1);
         double *pPenaltyWt = pSmoothEps + 1;
         double *pA = pPenaltyWt + 1;
