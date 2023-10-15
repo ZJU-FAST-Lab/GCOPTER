@@ -7,6 +7,7 @@ add_compile_options(-std=c++14)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   pcl_ros
@@ -151,6 +152,7 @@ add_executable(${PROJECT_NAME}_node
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
+   ${PCL_LIBRARIES}
  )
 
 #############
