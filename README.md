@@ -1,17 +1,3 @@
-# About This Fork
-
-This fork supports building and testing using a ROS Noetic Conda install maintained by [Robostack](https://robostack.github.io/GettingStarted.html).
-
-```sh
-mamba install ros-noetic-desktop-full=1.5.0 -c robostack-staging -y
-
-mamba install compilers cmake pkg-config make ninja colcon-common-extensions catkin_tools -y
-
-mamba install ompl=1.5.2 armadillo=12.6.5 -y
-```
-
-Now you can use it on whatever distro you like (Ubuntu Jammy is tested). See commits to find out what changes have been made. The original README is kept below, enjoy!
-
 # GCOPTER
 
 __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190.pdf). __User-defined state-input constraints__ for dynamics involving [__nonlinear drag effects__](https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf) are supported.
@@ -53,7 +39,10 @@ __Paper__: [Geometrically Constrained Trajectory Optimization for Multicopters](
 ### Example 1: Global Trajectory Planning
 
 This is a minimal yet non-trivial example of our trajectory optimizer for real-time high-quality corridor and global trajectory generation subject to dynamic constraints. For installation, the following terminal commands are helpful.
-    
+
+* If you want to use it with the system-installed ROS:
+
+    ```sh
     sudo apt update
     sudo apt install cpufrequtils
     sudo apt install libompl-dev
@@ -64,8 +53,30 @@ This is a minimal yet non-trivial example of our trajectory optimizer for real-t
     catkin_make
     source devel/setup.bash
     roslaunch gcopter global_planning.launch
+    ```
 
-After conduct the command, you will see the windows for rviz and rqt_plot. Please follow the gif below for global trajectory planning in a random map.
+* Alternatively, you can try it in a virtual environment:
+
+    Using a virtual environment is great if you are on Ubuntu 22 and don't want to compile ROS 1, or maybe want to use this project with deep learning frameworks. Please refer to [RoboStack](https://robostack.github.io/GettingStarted.html)'s page for more information.
+
+    ```sh
+    mamba create -n gcopter python=3.9 -y
+    mamba activate gcopter
+
+    mamba install ros-noetic-desktop-full=1.5.0 -c robostack-staging -y
+    mamba install compilers cmake pkg-config make ninja colcon-common-extensions catkin_tools -y
+    mamba install ompl=1.5.2 -y
+
+    # reactivate the env to prevent permission errors
+    mamba deactivate
+    mamba activate gcopter
+    cd ${CATKIN_WORKSPACE}
+    catkin_make
+    source devel/setup.bash
+    roslaunch gcopter global_planning.launch
+    ```
+
+After conducting the command, you will see the windows for rviz and rqt_plot. Please follow the gif below for global trajectory planning in a random map.
 <p align="center">
     <img src="misc/application1_global_planning.gif" width="600" height="407" />
 </p>
