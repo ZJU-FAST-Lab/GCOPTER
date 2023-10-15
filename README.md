@@ -10,7 +10,7 @@ mamba install compilers cmake pkg-config make ninja colcon-common-extensions cat
 mamba install ompl=1.5.2 armadillo=12.6.5 -y
 ```
 
-Now you can use it on whatever distro you like (Ubuntu Jammy is tested). See commits to find out what changes have been made. Origin README is preserved below.
+Now you can use it on whatever distro you like (Ubuntu Jammy is tested). See commits to find out what changes have been made. The original README is kept below, enjoy!
 
 # GCOPTER
 
