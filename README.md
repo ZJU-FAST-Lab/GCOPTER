@@ -1,3 +1,17 @@
+# About This Fork
+
+This fork supports building and testing using a ROS Noetic Conda install maintained by [Robostack](https://robostack.github.io/GettingStarted.html).
+
+```sh
+mamba install ros-noetic-desktop-full=1.5.0 -c robostack-staging -y
+
+mamba install compilers cmake pkg-config make ninja colcon-common-extensions catkin_tools -y
+
+mamba install ompl=1.5.2 armadillo=12.6.5 -y
+```
+
+Now you can use it on whatever distro you like (Ubuntu Jammy is tested). See commits to find out what changes have been made. Origin README is preserved below.
+
 # GCOPTER
 
 __GCOPTER__ is an efficient and versatile multicopter trajectory optimizer built upon a novel sparse trajectory representation named [__MINCO__](https://arxiv.org/pdf/2103.00190.pdf). __User-defined state-input constraints__ for dynamics involving [__nonlinear drag effects__](https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf) are supported.

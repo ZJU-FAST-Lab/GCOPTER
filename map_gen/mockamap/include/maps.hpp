@@ -1,6 +1,7 @@
 #ifndef MAPS_HPP
 #define MAPS_HPP
 
+#include <deque>
 #include <ros/ros.h>
 
 #include <pcl/point_cloud.h>
