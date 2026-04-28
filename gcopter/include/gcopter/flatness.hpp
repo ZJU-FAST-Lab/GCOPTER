@@ -31,9 +31,27 @@
 
 namespace flatness
 {
-    class FlatnessMap  // See https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf
+    /**
+     * @brief 差分平坦度映射类 (Differential Flatness Map)
+     * 
+     * 该类实现了考虑复杂空气阻力（水平、垂直及非线性寄生阻力）的四旋翼飞行器差分平坦度映射。
+     * 主要提供正向映射（将轨迹上的平坦输出及其导数转换为控制系统的期望推力、姿态和角速度）
+     * 和反向映射（用于轨迹优化过程中的基于链式法则的梯度反向计算传递）。
+     * 相关推导详见: https://github.com/ZJU-FAST-Lab/GCOPTER/blob/main/misc/flatness.pdf
+     */
+    class FlatnessMap
     {
     public:
+        /**
+         * @brief 初始化四旋翼飞行器的物理及气动参数
+         *
+         * @param vehicle_mass 飞行器质量
+         * @param gravitational_acceleration 重力加速度
+         * @param horitonral_drag_coeff 水平气动阻力系数
+         * @param vertical_drag_coeff 垂直气动阻力系数
+         * @param parasitic_drag_coeff 寄生阻力系数（与速度的平方成正比）
+         * @param speed_smooth_factor 速度平滑因子，用于避免奇异性或微小速度下的分母为零等情况
+         */
         inline void reset(const double &vehicle_mass,
                           const double &gravitational_acceleration,
                           const double &horitonral_drag_coeff,
@@ -51,16 +69,31 @@ namespace flatness
             return;
         }
 
-        inline void forward(const Eigen::Vector3d &vel,
-                            const Eigen::Vector3d &acc,
-                            const Eigen::Vector3d &jer,
-                            const double &psi,
-                            const double &dpsi,
-                            double &thr,
-                            Eigen::Vector4d &quat,
-                            Eigen::Vector3d &omg)
+        /**
+         * @brief 正向平坦度映射 (Forward Flatness Map)
+         *
+         * 已知轨迹当前状态下（基于给定的速度、加速度、加加速度和偏航等），根据包含了空气阻力的动力学模型，
+         * 解析计算所需的期望推力、期望姿态（四元数表示）和期望体轴角速度。
+         *
+         * @param vel 速度向量 (Velocity)
+         * @param acc 加速度向量 (Acceleration)
+         * @param jer 加加速度向量 (Jerk, 加速度的导数)
+         * @param psi 偏航角 (Yaw)
+         * @param dpsi 偏航角速率 (Yaw rate)
+         * @param thr [输出] 系统所需的期望总推力 (Thrust)
+         * @param quat [输出] 系统所需的期望姿态四元数 (Quaternion [w, x, y, z])
+         * @param omg [输出] 系统所需的期望体轴角速度 (Angular velocity)
+         */
+        inline void forward(const Eigen::Vector3d &vel, // 航迹系速度
+                            const Eigen::Vector3d &acc, // 航迹系加速度
+                            const Eigen::Vector3d &jer, // 航迹系加加速度
+                            const double &psi, // 航迹系偏航角
+                            const double &dpsi, // 航迹系偏航角速率
+                            double &thr, // 输出：期望推力
+                            Eigen::Vector4d &quat, // 输出：期望姿态四元数
+                            Eigen::Vector3d &omg) // 输出：期望体轴角速度
         {
-            double w0, w1, w2, dw0, dw1, dw2;
+            double w0, w1, w2, dw0, dw1, dw2; // 空气阻力相关中间变量
 
             v0 = vel(0);
             v1 = vel(1);
@@ -133,6 +166,26 @@ namespace flatness
             return;
         }
 
+        /**
+         * @brief 反向梯度映射 (Backward Map / Gradient Backpropagation)
+         *
+         * 在飞行轨迹优化框架（如MINCO框架）中，用于反推梯度。
+         * 给定代价函数（Loss Function）对推力、姿态四元数、角速度等控制和状态变量的梯度，
+         * 通过链式法则求出代价函数对平坦输出（偏航、位置、速度、加速度和加加速度等）产生的总梯度。
+         * 这部分通常是基于分析求导（Analytical Differentiation）获得。
+         *
+         * @param pos_grad 目标函数对位置的现有梯度
+         * @param vel_grad 目标函数对速度的现有梯度
+         * @param thr_grad 目标函数对推力的导数/梯度
+         * @param quat_grad 目标函数对四元数姿态的梯度
+         * @param omg_grad 目标函数对角速度的梯度
+         * @param pos_total_grad [输出] 传递到当前点下，目标函数关于位置的总梯度
+         * @param vel_total_grad [输出] 传递到当前点下，目标函数关于速度的总梯度
+         * @param acc_total_grad [输出] 传递到当前点下，目标函数关于加速度的总梯度
+         * @param jer_total_grad [输出] 传递到当前点下，目标函数关于加加速度的总梯度
+         * @param psi_total_grad [输出] 传递到当前点下，目标函数关于偏航角的总梯度
+         * @param dpsi_total_grad [输出] 传递到当前点下，目标函数关于偏航角速率的总梯度
+         */
         inline void backward(const Eigen::Vector3d &pos_grad,
                              const Eigen::Vector3d &vel_grad,
                              const double &thr_grad,
