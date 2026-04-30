@@ -84,84 +84,75 @@ namespace flatness
          * @param quat [输出] 系统所需的期望姿态四元数 (Quaternion [w, x, y, z])
          * @param omg [输出] 系统所需的期望体轴角速度 (Angular velocity)
          */
-        inline void forward(const Eigen::Vector3d &vel, // 航迹系速度
-                            const Eigen::Vector3d &acc, // 航迹系加速度
-                            const Eigen::Vector3d &jer, // 航迹系加加速度
-                            const double &psi, // 航迹系偏航角
-                            const double &dpsi, // 航迹系偏航角速率
-                            double &thr, // 输出：期望推力
+        inline void forward(const Eigen::Vector3d &vel, // 大地系下的速度
+                            const Eigen::Vector3d &acc, // 大地系下的加速度
+                            const Eigen::Vector3d &jer, // 大地系下的加加速度
+                            double &thr, // 输出：期望前向推力
                             Eigen::Vector4d &quat, // 输出：期望姿态四元数
-                            Eigen::Vector3d &omg) // 输出：期望体轴角速度
+                            Eigen::Vector3d &omg) // 输出：期望气流系角速度
         {
-            double w0, w1, w2, dw0, dw1, dw2; // 空气阻力相关中间变量
+            // ======= 1. 基向量计算 (气流系 Wind Frame：NED 标准，无风假设) =======
+            // 通过大地系位置向量 [x y z]^T 推导出气流系的基向量在大地系中的投影（i_a, j_a, k_a）
+            // 其中 i_a 沿着飞机的空速方向，j_a 垂直于速度与加速度构成的平面，k_a 则由右手定则补全
 
-            v0 = vel(0);
-            v1 = vel(1);
-            v2 = vel(2);
-            a0 = acc(0);
-            a1 = acc(1);
-            a2 = acc(2);
-            cp_term = sqrt(v0 * v0 + v1 * v1 + v2 * v2 + veps);
-            w_term = 1.0 + cp * cp_term;
-            w0 = w_term * v0;
-            w1 = w_term * v1;
-            w2 = w_term * v2;
-            dh_over_m = dh / mass;
-            zu0 = a0 + dh_over_m * w0;
-            zu1 = a1 + dh_over_m * w1;
-            zu2 = a2 + dh_over_m * w2 + grav;
-            zu_sqr0 = zu0 * zu0;
-            zu_sqr1 = zu1 * zu1;
-            zu_sqr2 = zu2 * zu2;
-            zu01 = zu0 * zu1;
-            zu12 = zu1 * zu2;
-            zu02 = zu0 * zu2;
-            zu_sqr_norm = zu_sqr0 + zu_sqr1 + zu_sqr2;
-            zu_norm = sqrt(zu_sqr_norm);
-            z0 = zu0 / zu_norm;
-            z1 = zu1 / zu_norm;
-            z2 = zu2 / zu_norm;
-            ng_den = zu_sqr_norm * zu_norm;
-            ng00 = (zu_sqr1 + zu_sqr2) / ng_den;
-            ng01 = -zu01 / ng_den;
-            ng02 = -zu02 / ng_den;
-            ng11 = (zu_sqr0 + zu_sqr2) / ng_den;
-            ng12 = -zu12 / ng_den;
-            ng22 = (zu_sqr0 + zu_sqr1) / ng_den;
-            v_dot_a = v0 * a0 + v1 * a1 + v2 * a2;
-            dw_term = cp * v_dot_a / cp_term;
-            dw0 = w_term * a0 + dw_term * v0;
-            dw1 = w_term * a1 + dw_term * v1;
-            dw2 = w_term * a2 + dw_term * v2;
-            dz_term0 = jer(0) + dh_over_m * dw0;
-            dz_term1 = jer(1) + dh_over_m * dw1;
-            dz_term2 = jer(2) + dh_over_m * dw2;
-            dz0 = ng00 * dz_term0 + ng01 * dz_term1 + ng02 * dz_term2;
-            dz1 = ng01 * dz_term0 + ng11 * dz_term1 + ng12 * dz_term2;
-            dz2 = ng02 * dz_term0 + ng12 * dz_term1 + ng22 * dz_term2;
-            f_term0 = mass * a0 + dv * w0;
-            f_term1 = mass * a1 + dv * w1;
-            f_term2 = mass * (a2 + grav) + dv * w2;
-            thr = z0 * f_term0 + z1 * f_term1 + z2 * f_term2;
-            tilt_den = sqrt(2.0 * (1.0 + z2));
-            tilt0 = 0.5 * tilt_den;
-            tilt1 = -z1 / tilt_den;
-            tilt2 = z0 / tilt_den;
-            c_half_psi = cos(0.5 * psi);
-            s_half_psi = sin(0.5 * psi);
-            quat(0) = tilt0 * c_half_psi;
-            quat(1) = tilt1 * c_half_psi + tilt2 * s_half_psi;
-            quat(2) = tilt2 * c_half_psi - tilt1 * s_half_psi;
-            quat(3) = tilt0 * s_half_psi;
-            c_psi = cos(psi);
-            s_psi = sin(psi);
-            omg_den = z2 + 1.0;
-            omg_term = dz2 / omg_den;
-            omg(0) = dz0 * s_psi - dz1 * c_psi -
-                     (z0 * s_psi - z1 * c_psi) * omg_term;
-            omg(1) = dz0 * c_psi + dz1 * s_psi -
-                     (z0 * c_psi + z1 * s_psi) * omg_term;
-            omg(2) = (z1 * dz0 - z0 * dz1) / omg_den + dpsi;
+            // 默认无风，空速等于地速
+            double v_norm = vel.norm();
+            double v_norm_inv = 1.0 / (v_norm + 1e-6); // 防止奇异
+
+            // 气流系 X 轴：沿空速（地速）方向
+            Eigen::Vector3d i_a = vel * v_norm_inv;
+
+            // 过载加速度：飞机的绝对加速度与重力加速度的差值
+            // NED 坐标系下重力方向为 [0, 0, g]^T
+            Eigen::Vector3d a_g = acc;
+            a_g(2) -= grav; // 过载加速度 = 绝对加速度 - 重力加速度
+
+            // 气流系 Y 轴：根据固定翼“协调转弯”无侧滑假设，y轴垂直于速度与气动加速度构成的对称平面
+            // 利用右手定则 v x a_g 必定得到指向飞机右侧的 Y 轴矢量
+            Eigen::Vector3d v_times_ag = vel.cross(a_g);
+            double v_times_ag_norm = v_times_ag.norm();
+            double v_times_ag_inv = 1.0 / (v_times_ag_norm + 1e-6);
+            Eigen::Vector3d j_a = v_times_ag * v_times_ag_inv;
+
+            // 气流系 Z 轴：在对称平面内指向下方，由右手法则 X x Y = Z 补全
+            Eigen::Vector3d k_a = i_a.cross(j_a);
+
+            // ======= 2. 姿态四元数计算 =======
+            // R 为气流系到大地系的方向余弦矩阵，列向量分别为 i_a, j_a, k_a 在大地系中的投影
+            // R 属于 SO(3)，可以通过 Eigen 的函数直接转换为四元数表示的姿态
+            Eigen::Matrix3d R;
+            R.col(0) = i_a;
+            R.col(1) = j_a;
+            R.col(2) = k_a;
+            Eigen::Quaterniond q_obj(R);
+            quat(0) = q_obj.w();
+            quat(1) = q_obj.x();
+            quat(2) = q_obj.y();
+            quat(3) = q_obj.z();
+
+            // ======= 3. 角速度与导向量计算 =======
+            // 气流轴系 X 轴单位向量 (i_a) 的时间导数在大地系下的投影 (i_a_dot)
+            double v_dot_a = vel.dot(acc);
+            Eigen::Vector3d i_a_dot = (acc * v_norm - vel * v_dot_a * v_norm_inv) * (v_norm_inv * v_norm_inv);
+
+            // 气流轴系 Y 轴 (j_a) 的时间导数在大地系下的投影 (a_g 的导数即为加加速度 jer)
+            // d/dt (v x a_g) = a x a_g + v x jerk
+            Eigen::Vector3d v_times_ag_dot = acc.cross(a_g) + vel.cross(jer);
+            // c · c_dot, used by d/dt (c / ||c||) for the normalization term
+            double cross_dot_inner = v_times_ag.dot(v_times_ag_dot);
+            // d/dt (c / ||c||) = (c_dot * ||c|| - c * (c · c_dot) / ||c||) / ||c||^2
+            Eigen::Vector3d j_a_dot = (v_times_ag_dot * v_times_ag_norm - v_times_ag * cross_dot_inner * v_times_ag_inv) * (v_times_ag_inv * v_times_ag_inv);
+
+            // 气流轴系 Z 轴 (k_a) 的时间导数在大地系下的投影不需要，故不计算
+
+            // 泊松方程反解气流系角速度在气流系下的投影 ^A\omega
+            omg(0) = k_a.dot(j_a_dot);  // 滚转角速率 \omega_x
+            omg(1) = -k_a.dot(i_a_dot); // 俯仰角速率 \omega_y
+            omg(2) = j_a.dot(i_a_dot);  // 偏航角速率 \omega_z
+
+            // ======= 4. 期望推力计算 =======
+            // 在质点模型下，沿着速度方向的总气体力即为推力减去阻力
+            thr = mass * a_g.dot(i_a) + cp * v_norm * v_norm;
 
             return;
         }
