@@ -83,13 +83,18 @@ namespace flatness
          * @param thr [输出] 系统所需的期望总推力 (Thrust)
          * @param quat [输出] 系统所需的期望姿态四元数 (Quaternion [w, x, y, z])
          * @param omg [输出] 系统所需的期望体轴角速度 (Angular velocity)
+         * @param n_t_out [可选输出] 切向过载 n_t
+         * @param n_n_out [可选输出] 法向过载 n_n
+         * @param mu_out [可选输出] 速度滚转角 mu
          */
         inline void forward(const Eigen::Vector3d &vel, // 大地系下的速度
                             const Eigen::Vector3d &acc, // 大地系下的加速度
                             const Eigen::Vector3d &jer, // 大地系下的加加速度
-                            double &thr, // 输出：期望前向推力
                             Eigen::Vector4d &quat, // 输出：期望姿态四元数
-                            Eigen::Vector3d &omg) // 输出：期望气流系角速度
+                            Eigen::Vector3d &omg, // 输出：期望气流系角速度
+                            double *n_t_out = nullptr, // 可选输出：切向过载
+                            double *n_n_out = nullptr, // 可选输出：法向过载
+                            double *mu_out = nullptr) // 可选输出：速度滚转角
         {
             // ======= 1. 基向量计算 (气流系 Wind Frame：NED 标准，无风假设) =======
             // 通过大地系位置向量 [x y z]^T 推导出气流系的基向量在大地系中的投影（i_a, j_a, k_a）
@@ -130,7 +135,7 @@ namespace flatness
             quat(2) = q_obj.y();
             quat(3) = q_obj.z();
 
-            // ======= 3. 角速度与导向量计算 =======
+            // ======= 3. 角速度计算 =======
             // 气流轴系 X 轴单位向量 (i_a) 的时间导数在大地系下的投影 (i_a_dot)
             double v_dot_a = vel.dot(acc);
             Eigen::Vector3d i_a_dot = (acc * v_norm - vel * v_dot_a * v_norm_inv) * (v_norm_inv * v_norm_inv);
@@ -150,9 +155,33 @@ namespace flatness
             omg(1) = -k_a.dot(i_a_dot); // 俯仰角速率 \omega_y
             omg(2) = j_a.dot(i_a_dot);  // 偏航角速率 \omega_z
 
-            // ======= 4. 期望推力计算 =======
-            // 在质点模型下，沿着速度方向的总气体力即为推力减去阻力
-            thr = mass * a_g.dot(i_a) + cp * v_norm * v_norm;
+            // ======= 4. 控制量计算 =======
+            /// 控制量为[n_t n_n mu]，n_t为切向过载，n_n为法向过载，mu为速度滚转角
+            // n_t: a_g/g 在气流轴系 x 轴上的投影; n_n: a_g/g 在气流轴系 z 轴负方向的投影
+            double n_t = a_g.dot(i_a) / grav;
+            double n_n = -a_g.dot(k_a) / grav;
+            // mu: 气流系与航迹系的夹角 (绕速度方向)
+            double mu = 0.0;
+            Eigen::Vector3d a_perp = a_g - i_a * i_a.dot(a_g);
+            double a_perp_norm = a_perp.norm();
+            if (a_perp_norm > 1e-6)
+            {
+                Eigen::Vector3d k_t = -a_perp / a_perp_norm;
+                Eigen::Vector3d j_t = k_t.cross(i_a);
+                mu = std::atan2(j_t.dot(k_a), k_t.dot(k_a));
+            }
+            if (n_t_out)
+            {
+                *n_t_out = n_t;
+            }
+            if (n_n_out)
+            {
+                *n_n_out = n_n;
+            }
+            if (mu_out)
+            {
+                *mu_out = mu;
+            }
 
             return;
         }
