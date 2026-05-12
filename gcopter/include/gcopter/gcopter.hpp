@@ -338,25 +338,24 @@ namespace gcopter
         {
             const double velSqrMax = magnitudeBounds(0) * magnitudeBounds(0);
             const double omgSqrMax = magnitudeBounds(1) * magnitudeBounds(1);
-            const double thetaMax = magnitudeBounds(2);
-            const double thrustMean = 0.5 * (magnitudeBounds(3) + magnitudeBounds(4));
-            const double thrustRadi = 0.5 * fabs(magnitudeBounds(4) - magnitudeBounds(3));
-            const double thrustSqrRadi = thrustRadi * thrustRadi;
+            const double ntMax = magnitudeBounds(2);
+            const double ntMin = magnitudeBounds(3);
+            const double nnMax = magnitudeBounds(4);
+            const double muMax = magnitudeBounds(5);
 
             const double weightPos = penaltyWeights(0);
             const double weightVel = penaltyWeights(1);
             const double weightOmg = penaltyWeights(2);
-            const double weightTheta = penaltyWeights(3);
-            const double weightThrust = penaltyWeights(4);
+            const double weightNt = penaltyWeights(3);
+            const double weightNn = penaltyWeights(4);
+            const double weightMu = penaltyWeights(5);
 
             Eigen::Vector3d pos, vel, acc, jer, sna;
             Eigen::Vector3d totalGradPos, totalGradVel, totalGradAcc, totalGradJer;
-            double totalGradPsi, totalGradPsiD;
-            double thr, cos_theta;
+            double n_t, n_n, mu;
             Eigen::Vector4d quat;
             Eigen::Vector3d omg;
-            double gradThr;
-            Eigen::Vector4d gradQuat;
+            double dJ_dnt, dJ_dnn, dJ_dmu;
             Eigen::Vector3d gradPos, gradVel, gradOmg;
 
             double step, alpha;
@@ -364,9 +363,9 @@ namespace gcopter
             Eigen::Matrix<double, 6, 1> beta0, beta1, beta2, beta3, beta4;
             Eigen::Vector3d outerNormal;
             int K, L;
-            double violaPos, violaVel, violaOmg, violaTheta, violaThrust;
-            double violaPosPenaD, violaVelPenaD, violaOmgPenaD, violaThetaPenaD, violaThrustPenaD;
-            double violaPosPena, violaVelPena, violaOmgPena, violaThetaPena, violaThrustPena;
+            double violaPos, violaVel, violaOmg, violaNt, violaNn, violaMu;
+            double violaPosPenaD, violaVelPenaD, violaOmgPenaD, violaNtPenaD, violaNnPenaD, violaMuPenaD;
+            double violaPosPena, violaVelPena, violaOmgPena, violaNtPena, violaNnPena, violaMuPena;
             double node, pena;
 
             const int pieceNum = T.size();
@@ -393,16 +392,18 @@ namespace gcopter
                     jer = c.transpose() * beta3;
                     sna = c.transpose() * beta4;
 
-                    flatMap.forward(vel, acc, jer, 0.0, 0.0, thr, quat, omg);
+                    flatMap.forward(vel, acc, jer, quat, omg, &n_t, &n_n, &mu);
 
                     violaVel = vel.squaredNorm() - velSqrMax;
                     violaOmg = omg.squaredNorm() - omgSqrMax;
-                    cos_theta = 1.0 - 2.0 * (quat(1) * quat(1) + quat(2) * quat(2));
-                    violaTheta = acos(cos_theta) - thetaMax;
-                    violaThrust = (thr - thrustMean) * (thr - thrustMean) - thrustSqrRadi;
+                    violaNt = (n_t - 0.5 * (ntMax + ntMin)) * (n_t - 0.5 * (ntMax + ntMin)) -
+                              0.25 * (ntMax - ntMin) * (ntMax - ntMin);
+                    violaNn = n_n * n_n - nnMax * nnMax;
+                    violaMu = mu * mu - muMax * muMax;
 
-                    gradThr = 0.0;
-                    gradQuat.setZero();
+                    dJ_dnt = 0.0;
+                    dJ_dnn = 0.0;
+                    dJ_dmu = 0.0;
                     gradPos.setZero(), gradVel.setZero(), gradOmg.setZero();
                     pena = 0.0;
 
@@ -431,23 +432,28 @@ namespace gcopter
                         pena += weightOmg * violaOmgPena;
                     }
 
-                    if (smoothedL1(violaTheta, smoothFactor, violaThetaPena, violaThetaPenaD))
+                    if (smoothedL1(violaNt, smoothFactor, violaNtPena, violaNtPenaD))
                     {
-                        gradQuat += weightTheta * violaThetaPenaD /
-                                    sqrt(1.0 - cos_theta * cos_theta) * 4.0 *
-                                    Eigen::Vector4d(0.0, quat(1), quat(2), 0.0);
-                        pena += weightTheta * violaThetaPena;
+                        dJ_dnt += weightNt * violaNtPenaD * 2.0 * (n_t - 0.5 * (ntMax + ntMin));
+                        pena += weightNt * violaNtPena;
                     }
 
-                    if (smoothedL1(violaThrust, smoothFactor, violaThrustPena, violaThrustPenaD))
+                    if (smoothedL1(violaNn, smoothFactor, violaNnPena, violaNnPenaD))
                     {
-                        gradThr += weightThrust * violaThrustPenaD * 2.0 * (thr - thrustMean);
-                        pena += weightThrust * violaThrustPena;
+                        dJ_dnn += weightNn * violaNnPenaD * 2.0 * n_n;
+                        pena += weightNn * violaNnPena;
                     }
 
-                    flatMap.backward(gradPos, gradVel, gradThr, gradQuat, gradOmg,
-                                     totalGradPos, totalGradVel, totalGradAcc, totalGradJer,
-                                     totalGradPsi, totalGradPsiD);
+                    if (smoothedL1(violaMu, smoothFactor, violaMuPena, violaMuPenaD))
+                    {
+                        dJ_dmu += weightMu * violaMuPenaD * 2.0 * mu;
+                        pena += weightMu * violaMuPena;
+                    }
+
+                    flatMap.backward(vel, acc, jer,
+                                     dJ_dnt, dJ_dnn, dJ_dmu, gradOmg,
+                                     gradPos, gradVel,
+                                     totalGradPos, totalGradVel, totalGradAcc, totalGradJer);
 
                     node = (j == 0 || j == integralResolution) ? 0.5 : 1.0;
                     alpha = j * integralFrac;

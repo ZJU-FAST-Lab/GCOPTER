@@ -14,11 +14,13 @@ MaxVelMag:                  4.0
 
 MaxBdrMag:                  2.1
 
-MaxTiltAngle:               1.05
+NtMax:                      3.0
 
-MinThrust:                  2.0
+NtMin:                      0.5
 
-MaxThrust:                  12.0
+NnMax:                      3.0
+
+MuMax:                      1.5
 
 VehicleMass:                0.61
 
@@ -34,7 +36,7 @@ SpeedEps:                   0.0001
 
 WeightT:                    20.0
 
-ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5]
+ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5]
 
 SmoothingEps:               1.0e-2
 

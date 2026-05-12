@@ -30,9 +30,10 @@ struct Config
     double timeoutRRT;
     double maxVelMag;
     double maxBdrMag;
-    double maxTiltAngle;
-    double minThrust;
-    double maxThrust;
+    double ntMax;
+    double ntMin;
+    double nnMax;
+    double muMax;
     double vehicleMass;
     double gravAcc;
     double horizDrag;
@@ -55,9 +56,10 @@ struct Config
         nh_priv.getParam("TimeoutRRT", timeoutRRT);
         nh_priv.getParam("MaxVelMag", maxVelMag);
         nh_priv.getParam("MaxBdrMag", maxBdrMag);
-        nh_priv.getParam("MaxTiltAngle", maxTiltAngle);
-        nh_priv.getParam("MinThrust", minThrust);
-        nh_priv.getParam("MaxThrust", maxThrust);
+        nh_priv.getParam("NtMax", ntMax);
+        nh_priv.getParam("NtMin", ntMin);
+        nh_priv.getParam("NnMax", nnMax);
+        nh_priv.getParam("MuMax", muMax);
         nh_priv.getParam("VehicleMass", vehicleMass);
         nh_priv.getParam("GravAcc", gravAcc);
         nh_priv.getParam("HorizDrag", horizDrag);
@@ -175,24 +177,26 @@ public:
 
                 gcopter::GCOPTER_PolytopeSFC gcopter;
 
-                // magnitudeBounds = [v_max, omg_max, theta_max, thrust_min, thrust_max]^T
-                // penaltyWeights = [pos_weight, vel_weight, omg_weight, theta_weight, thrust_weight]^T
+                // magnitudeBounds = [v_max, omg_max, nt_max, nt_min, nn_max, mu_max]^T
+                // penaltyWeights = [pos_weight, vel_weight, omg_weight, nt_weight, nn_weight, mu_weight]^T
                 // physicalParams = [vehicle_mass, gravitational_acceleration, horitonral_drag_coeff,
                 //                   vertical_drag_coeff, parasitic_drag_coeff, speed_smooth_factor]^T
                 // initialize some constraint parameters
-                Eigen::VectorXd magnitudeBounds(5);
-                Eigen::VectorXd penaltyWeights(5);
+                Eigen::VectorXd magnitudeBounds(6);
+                Eigen::VectorXd penaltyWeights(6);
                 Eigen::VectorXd physicalParams(6);
                 magnitudeBounds(0) = config.maxVelMag;
                 magnitudeBounds(1) = config.maxBdrMag;
-                magnitudeBounds(2) = config.maxTiltAngle;
-                magnitudeBounds(3) = config.minThrust;
-                magnitudeBounds(4) = config.maxThrust;
+                magnitudeBounds(2) = config.ntMax;
+                magnitudeBounds(3) = config.ntMin;
+                magnitudeBounds(4) = config.nnMax;
+                magnitudeBounds(5) = config.muMax;
                 penaltyWeights(0) = (config.chiVec)[0];
                 penaltyWeights(1) = (config.chiVec)[1];
                 penaltyWeights(2) = (config.chiVec)[2];
                 penaltyWeights(3) = (config.chiVec)[3];
                 penaltyWeights(4) = (config.chiVec)[4];
+                penaltyWeights(5) = (config.chiVec)[5];
                 physicalParams(0) = config.vehicleMass;
                 physicalParams(1) = config.gravAcc;
                 physicalParams(2) = config.horizDrag;
