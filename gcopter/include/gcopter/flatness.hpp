@@ -754,6 +754,7 @@ namespace flatness
                              const Eigen::Vector3d &dJ_domg,
                              const Eigen::Vector3d &pos_grad,
                              const Eigen::Vector3d &vel_grad,
+                             // 输出参数: 累积总梯度 (直接梯度 + 链式梯度)
                              Eigen::Vector3d &pos_total_grad,
                              Eigen::Vector3d &vel_total_grad,
                              Eigen::Vector3d &acc_total_grad,
@@ -771,6 +772,8 @@ namespace flatness
 
             // ---- 步骤 3: 速度梯度累积 (直接梯度 + 平坦度链式梯度) ----
             vel_total_grad += vel_grad;
+
+            // 由于加速度和加加速度不直接出现在约束中，暂不累积直接梯度，仅使用链式梯度
 
             return;
         }

@@ -34,6 +34,12 @@
 #include <cfloat>
 #include <vector>
 
+/**
+ * @brief 单段多项式轨迹类 (Polynomial Trajectory Piece)
+ * 
+ * 该类实现了一段 D 阶多项式空间曲线轨迹，存储了相对持续时间与多项式系数矩阵。
+ * 主要提供了正向的状态插值（位置、速度、加速度、加加速度）以及导函数求根验证等辅助功能。
+ */
 template <int D>
 class Piece
 {
@@ -49,6 +55,12 @@ private:
 public:
     Piece() = default;
 
+    /**
+     * @brief 初始化轨迹片段
+     *
+     * @param dur 轨迹段持续时间 (Duration)
+     * @param cMat 轨迹段多项式系数矩阵 (3 x (D+1) 的大小)
+     */
     Piece(double dur, const CoefficientMat &cMat)
         : duration(dur), coeffMat(cMat) {}
 
@@ -72,6 +84,12 @@ public:
         return coeffMat;
     }
 
+    /**
+     * @brief 获取对应相对时刻的位置 (Position)
+     *
+     * @param t 该段内的相对时间 (0 <= t <= duration)
+     * @return Eigen::Vector3d 返回该时刻对应的大地系三维位置向量
+     */
     inline Eigen::Vector3d getPos(const double &t) const
     {
         Eigen::Vector3d pos(0.0, 0.0, 0.0);
@@ -84,6 +102,12 @@ public:
         return pos;
     }
 
+    /**
+     * @brief 获取对应相对时刻的速度 (Velocity)
+     *
+     * @param t 该段内的相对时间 (0 <= t <= duration)
+     * @return Eigen::Vector3d 返回该时刻对应的大地系三维速度向量
+     */
     inline Eigen::Vector3d getVel(const double &t) const
     {
         Eigen::Vector3d vel(0.0, 0.0, 0.0);
@@ -98,6 +122,12 @@ public:
         return vel;
     }
 
+    /**
+     * @brief 获取对应相对时刻的加速度 (Acceleration)
+     *
+     * @param t 该段内的相对时间 (0 <= t <= duration)
+     * @return Eigen::Vector3d 返回该时刻对应的大地系三维加速度向量
+     */
     inline Eigen::Vector3d getAcc(const double &t) const
     {
         Eigen::Vector3d acc(0.0, 0.0, 0.0);
@@ -114,6 +144,12 @@ public:
         return acc;
     }
 
+    /**
+     * @brief 获取对应相对时刻的加加速度 (Jerk, 加速度的导数)
+     *
+     * @param t 该段内的相对时间 (0 <= t <= duration)
+     * @return Eigen::Vector3d 返回该时刻对应的大地系三维加加速度向量
+     */
     inline Eigen::Vector3d getJer(const double &t) const
     {
         Eigen::Vector3d jer(0.0, 0.0, 0.0);
@@ -174,6 +210,15 @@ public:
         return nAccCoeffMat;
     }
 
+    /**
+     * @brief 计算该段轨迹上的最大速度模长 (Maximum Velocity Magnitude)
+     *
+     * ======= 极值求根计算思路 =======
+     * 先求得归一化常系数，构造出三维分量平方和构成的一个多项式（表示模长的平方），
+     * 利用 RootFinder 进行一阶求导并求解多项式根（驻点），比对各根处的速度获得整段轨迹的绝对极值。
+     *
+     * @return double 全局最大速度速率
+     */
     inline double getMaxVelRate() const
     {
         VelCoefficientMat nVelCoeffMat = normalizeVelCoeffMat();
@@ -223,6 +268,11 @@ public:
         }
     }
 
+    /**
+     * @brief 计算该段轨迹上的最大加速度模长 (Maximum Acceleration Magnitude)
+     *
+     * @return double 最大加速度的模长大小
+     */
     inline double getMaxAccRate() const
     {
         AccCoefficientMat nAccCoeffMat = normalizeAccCoeffMat();
@@ -272,6 +322,17 @@ public:
         }
     }
 
+    /**
+     * @brief 动力学校验 - 检验整段轨迹速度是否无越界
+     *
+     * ======= 极值校验与多项式求根算法相结合 =======
+     * 对模长平方多项式偏移阈值（减去极大值的平方），检验该衍生多项式在0~1空间内是否有根。
+     * 此机制严格替代了有漏洞的密集布点采样检查法，能够确证“最大速度永不超限”。
+     *
+     * @param maxVelRate 给定的最大速度模长界限约束
+     * @return true 轨迹始终安全，满足要求
+     * @return false 存在超速不可行的区间
+     */
     inline bool checkMaxVelRate(const double &maxVelRate) const
     {
         double sqrMaxVelRate = maxVelRate * maxVelRate;
@@ -292,6 +353,13 @@ public:
         }
     }
 
+    /**
+     * @brief 动力学校验 - 检验整段轨迹加速度是否无越界
+     *
+     * @param maxAccRate 给定的最大加速度模长边界
+     * @return true 轨迹始终安全，满足计算得到的推力等需求
+     * @return false 存在加速度不可行的区间
+     */
     inline bool checkMaxAccRate(const double &maxAccRate) const
     {
         double sqrMaxAccRate = maxAccRate * maxAccRate;
@@ -314,6 +382,12 @@ public:
     }
 };
 
+/**
+ * @brief 完整多项式分段轨迹类 (Piecewise Polynomial Trajectory)
+ * 
+ * 该类将多个 Piece<D> 片段沿时间轴首尾相连成平滑连续的一整段全局轨迹。
+ * 对外包裹了对内的状态访问调用，提供整体性边界极值审查和按照绝对时间查找、插值的便利接口。
+ */
 template <int D>
 class Trajectory
 {
@@ -324,6 +398,12 @@ private:
 public:
     Trajectory() = default;
 
+    /**
+     * @brief 基于分段组合信息构造完整轨迹
+     *
+     * @param durs 各分段片段对应的持续时间序列
+     * @param cMats 各分段对应的一组多项式三维系数矩阵集合
+     */
     Trajectory(const std::vector<double> &durs,
                const std::vector<typename Piece<D>::CoefficientMat> &cMats)
     {
@@ -435,6 +515,15 @@ public:
         return;
     }
 
+    /**
+     * @brief 全局时间到时间段号的快速映射 (Find active piece idx and map local time)
+     *
+     * 逐段减去耗时来映射：将用户请求的一个“大一统”全局时间 t
+     * 直接重定位，算出它落在哪一个单段（Piece）中。
+     *
+     * @param t [输入/输出] 初始为全局运行时刻(0 ~ totalDuration)；调用完该指针被修改为当前所在分段内的局部运行时间
+     * @return int 该时刻当前所在的单段编号 (Range: 0 至 getPieceNum()-1)
+     */
     inline int locatePieceIdx(double &t) const
     {
         int N = getPieceNum();
@@ -455,6 +544,12 @@ public:
         return idx;
     }
 
+    /**
+     * @brief 便利函数：获取全局时刻下的位置向量 (Position)
+     *
+     * @param t 全局时间
+     * @return Eigen::Vector3d 组合计算后的大地系空间位置坐标
+     */
     inline Eigen::Vector3d getPos(double t) const
     {
         int pieceIdx = locatePieceIdx(t);
@@ -515,6 +610,15 @@ public:
         }
     }
 
+    /**
+     * @brief 计算该段轨迹上的最大速度模长 (Maximum Velocity Magnitude)
+     *
+     * ======= 极值求根计算思路 =======
+     * 先求得归一化常系数，构造出三维分量平方和构成的一个多项式（表示模长的平方），
+     * 利用 RootFinder 进行一阶求导并求解多项式根（驻点），比对各根处的速度获得整段轨迹的绝对极值。
+     *
+     * @return double 全局最大速度速率
+     */
     inline double getMaxVelRate() const
     {
         int N = getPieceNum();
@@ -528,6 +632,11 @@ public:
         return maxVelRate;
     }
 
+    /**
+     * @brief 计算该段轨迹上的最大加速度模长 (Maximum Acceleration Magnitude)
+     *
+     * @return double 最大加速度的模长大小
+     */
     inline double getMaxAccRate() const
     {
         int N = getPieceNum();
@@ -541,6 +650,17 @@ public:
         return maxAccRate;
     }
 
+    /**
+     * @brief 动力学校验 - 检验整段轨迹速度是否无越界
+     *
+     * ======= 极值校验与多项式求根算法相结合 =======
+     * 对模长平方多项式偏移阈值（减去极大值的平方），检验该衍生多项式在0~1空间内是否有根。
+     * 此机制严格替代了有漏洞的密集布点采样检查法，能够确证“最大速度永不超限”。
+     *
+     * @param maxVelRate 给定的最大速度模长界限约束
+     * @return true 轨迹始终安全，满足要求
+     * @return false 存在超速不可行的区间
+     */
     inline bool checkMaxVelRate(const double &maxVelRate) const
     {
         int N = getPieceNum();
@@ -552,6 +672,13 @@ public:
         return feasible;
     }
 
+    /**
+     * @brief 动力学校验 - 检验整段轨迹加速度是否无越界
+     *
+     * @param maxAccRate 给定的最大加速度模长边界
+     * @return true 轨迹始终安全，满足计算得到的推力等需求
+     * @return false 存在加速度不可行的区间
+     */
     inline bool checkMaxAccRate(const double &maxAccRate) const
     {
         int N = getPieceNum();
