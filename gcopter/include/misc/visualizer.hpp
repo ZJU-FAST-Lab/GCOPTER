@@ -36,8 +36,9 @@ private:
 
 public:
     ros::Publisher speedPub;
-    ros::Publisher thrPub;
-    ros::Publisher tiltPub;
+    ros::Publisher ntPub;
+    ros::Publisher nnPub;
+    ros::Publisher muPub;
     ros::Publisher bdrPub;
 
 public:
@@ -51,8 +52,9 @@ public:
         edgePub = nh.advertise<visualization_msgs::Marker>("/visualizer/edge", 1000);
         spherePub = nh.advertise<visualization_msgs::Marker>("/visualizer/spheres", 1000);
         speedPub = nh.advertise<std_msgs::Float64>("/visualizer/speed", 1000);
-        thrPub = nh.advertise<std_msgs::Float64>("/visualizer/total_thrust", 1000);
-        tiltPub = nh.advertise<std_msgs::Float64>("/visualizer/tilt_angle", 1000);
+        ntPub = nh.advertise<std_msgs::Float64>("/visualizer/tangential_load", 1000);
+        nnPub = nh.advertise<std_msgs::Float64>("/visualizer/normal_load", 1000);
+        muPub = nh.advertise<std_msgs::Float64>("/visualizer/roll_angle", 1000);
         bdrPub = nh.advertise<std_msgs::Float64>("/visualizer/body_rate", 1000);
     }
 

@@ -27,13 +27,19 @@ struct Config
     double dilateRadius;
     double voxelWidth;
     std::vector<double> mapBound;
+    bool enableObstacle;   // true=RRT+SFC, false=仅地面约束
     double timeoutRRT;
-    double maxVelMag;
-    double maxBdrMag;
-    double ntMax;
-    double ntMin;
-    double nnMax;
-    double muMax;
+    double maxVelMag;      // 最大空速 (m/s)
+    double minVelMag;      // 最小空速 (m/s)
+    double maxBdrMag;      // 最大 ω_x (rad/s)
+    double nnMax;          // V-N 图结构过载上限 (g)
+    double muMax;          // 最大滚转角 μ (rad)
+    double CLmax;          // 最大升力系数
+    double wingArea;       // 翼面积 (m²)
+    double rhoAir;         // 空气密度 (kg/m³)
+    double nnMin;          // V-N 图结构过载下限 (g, 负值)
+    double softMinK;       // V-N 软过渡锐度
+    double ntMargin;       // SEP 安全裕度 (g)
     double vehicleMass;
     double gravAcc;
     double horizDrag;
@@ -41,7 +47,7 @@ struct Config
     double parasDrag;
     double speedEps;
     double weightT;
-    std::vector<double> chiVec;
+    std::vector<double> chiVec;  // 6 元素: [pos, vel, omg, nt, nn, mu]
     double smoothingEps;
     int integralIntervs;
     double relCostTol;
@@ -53,13 +59,19 @@ struct Config
         nh_priv.getParam("DilateRadius", dilateRadius);
         nh_priv.getParam("VoxelWidth", voxelWidth);
         nh_priv.getParam("MapBound", mapBound);
+        nh_priv.param("EnableObstacle", enableObstacle, true);
         nh_priv.getParam("TimeoutRRT", timeoutRRT);
+        nh_priv.getParam("MinVelMag", minVelMag);
         nh_priv.getParam("MaxVelMag", maxVelMag);
         nh_priv.getParam("MaxBdrMag", maxBdrMag);
-        nh_priv.getParam("NtMax", ntMax);
-        nh_priv.getParam("NtMin", ntMin);
         nh_priv.getParam("NnMax", nnMax);
         nh_priv.getParam("MuMax", muMax);
+        nh_priv.param("CLmax", CLmax, 1.2);
+        nh_priv.param("WingArea", wingArea, 0.45);
+        nh_priv.param("RhoAir", rhoAir, 1.225);
+        nh_priv.getParam("NnMin", nnMin);
+        nh_priv.param("SoftMinK", softMinK, 20.0);
+        nh_priv.param("NtMargin", ntMargin, 0.05);
         nh_priv.getParam("VehicleMass", vehicleMass);
         nh_priv.getParam("GravAcc", gravAcc);
         nh_priv.getParam("HorizDrag", horizDrag);
@@ -77,6 +89,12 @@ struct Config
 class GlobalPlanner
 {
 private:
+    struct GoalState
+    {
+        Eigen::Vector3d pos;
+        double yaw;
+    };
+
     Config config;
 
     ros::NodeHandle nh;
@@ -86,19 +104,25 @@ private:
     bool mapInitialized;
     voxel_map::VoxelMap voxelMap;
     Visualizer visualizer;
-    std::vector<Eigen::Vector3d> startGoal;
+    std::vector<GoalState> startGoal;
 
     Trajectory<5> traj;
     double trajStamp;
 
 public:
-    GlobalPlanner(const Config &conf,
-                  ros::NodeHandle &nh_)
+        GlobalPlanner(const Config &conf,
+                                    ros::NodeHandle &nh_)
         : config(conf),
           nh(nh_),
-          mapInitialized(false),
+          mapInitialized(!config.enableObstacle),  // 无障碍模式跳过地图等待
           visualizer(nh)
     {
+                ROS_WARN("GlobalPlanner Initialized!");
+                ROS_WARN("TargetTopic: [%s], EnableObstacle: %s, mapInitialized: %s",
+                                 config.targetTopic.c_str(),
+                                 config.enableObstacle ? "true" : "false",
+                                 mapInitialized ? "true" : "false");
+
         const Eigen::Vector3i xyz((config.mapBound[1] - config.mapBound[0]) / config.voxelWidth,
                                   (config.mapBound[3] - config.mapBound[2]) / config.voxelWidth,
                                   (config.mapBound[5] - config.mapBound[4]) / config.voxelWidth);
@@ -107,8 +131,11 @@ public:
 
         voxelMap = voxel_map::VoxelMap(xyz, offset, config.voxelWidth);
 
-        mapSub = nh.subscribe(config.mapTopic, 1, &GlobalPlanner::mapCallBack, this,
-                              ros::TransportHints().tcpNoDelay());
+        if (config.enableObstacle)
+        {
+            mapSub = nh.subscribe(config.mapTopic, 1, &GlobalPlanner::mapCallBack, this,
+                                  ros::TransportHints().tcpNoDelay());
+        }
 
         targetSub = nh.subscribe(config.targetTopic, 1, &GlobalPlanner::targetCallBack, this,
                                  ros::TransportHints().tcpNoDelay());
@@ -142,55 +169,102 @@ public:
         }
     }
 
+    // ================================================================
+    //  辅助: 生成「仅地面+天花板」的 H-rep 凸多面体 (无障碍模式)
+    //  6 个面: 地面(z≥zMin), 天花板(z≤zMax), 4个垂直面包围起止点
+    // ================================================================
+    static inline Eigen::MatrixX4d makeGroundHrep(
+        const Eigen::Vector3d &start,
+        const Eigen::Vector3d &goal,
+        double zMin, double zMax)
+    {
+        Eigen::MatrixX4d hPoly(6, 4);
+        // 面格式: a·x + b·y + c·z + d ≤ 0
+        // ground:   z ≥ zMin  → -z + zMin ≤ 0
+        hPoly.row(0) << 0, 0, -1, zMin;
+        // ceiling:  z ≤ zMax  →  z - zMax ≤ 0
+        hPoly.row(1) << 0, 0, 1, -zMax;
+        // 4 垂直面: 包围起止点 + 宽裕度
+        double margin = 5.0;
+        double xMin = std::min(start.x(), goal.x()) - margin;
+        double xMax = std::max(start.x(), goal.x()) + margin;
+        double yMin = std::min(start.y(), goal.y()) - margin;
+        double yMax = std::max(start.y(), goal.y()) + margin;
+        hPoly.row(2) << -1, 0, 0, xMin;   // -x + xMin ≤ 0 → x ≥ xMin
+        hPoly.row(3) << 1, 0, 0, -xMax;   //  x - xMax ≤ 0 → x ≤ xMax
+        hPoly.row(4) << 0, -1, 0, yMin;   // -y + yMin ≤ 0 → y ≥ yMin
+        hPoly.row(5) << 0, 1, 0, -yMax;   //  y - yMax ≤ 0 → y ≤ yMax
+        return hPoly;
+    }
+
     inline void plan()
     {
+        ROS_WARN("plan() called. startGoal.size() = %zu", startGoal.size());
         if (startGoal.size() == 2)
         {
             std::vector<Eigen::Vector3d> route;
-            sfc_gen::planPath<voxel_map::VoxelMap>(startGoal[0],
-                                                   startGoal[1],
+            std::vector<Eigen::MatrixX4d> hPolys;
+
+            if (config.enableObstacle)
+            {
+                // ---- 有障碍模式: RRT* + SFC 走廊 ----
+                sfc_gen::planPath<voxel_map::VoxelMap>(startGoal[0].pos,
+                                                   startGoal[1].pos,
                                                    voxelMap.getOrigin(),
                                                    voxelMap.getCorner(),
                                                    &voxelMap, 0.01,
                                                    route);
-            std::vector<Eigen::MatrixX4d> hPolys;
-            std::vector<Eigen::Vector3d> pc;
-            voxelMap.getSurf(pc);
+                std::vector<Eigen::Vector3d> pc;
+                voxelMap.getSurf(pc);
 
-            sfc_gen::convexCover(route,
-                                 pc,
-                                 voxelMap.getOrigin(),
-                                 voxelMap.getCorner(),
-                                 7.0,
-                                 3.0,
-                                 hPolys);
-            sfc_gen::shortCut(hPolys);
+                sfc_gen::convexCover(route,
+                                     pc,
+                                     voxelMap.getOrigin(),
+                                     voxelMap.getCorner(),
+                                     7.0,
+                                     3.0,
+                                     hPolys);
+                sfc_gen::shortCut(hPolys);
+            }
+            else
+            {
+                // ---- 无障碍模式: 仅地面约束 + 边界框 ----
+                route = {startGoal[0].pos, startGoal[1].pos};
+                hPolys = {makeGroundHrep(startGoal[0].pos, startGoal[1].pos, 0.0, 100.0)};
+            }
 
             if (route.size() > 1)
             {
                 visualizer.visualizePolytope(hPolys);
 
+                const double initSpeed = std::max(config.minVelMag, 0.1);
+                const Eigen::Vector3d initVel(std::cos(startGoal[0].yaw) * initSpeed,
+                                              std::sin(startGoal[0].yaw) * initSpeed,
+                                              0.0);
+                const Eigen::Vector3d finalVel(std::cos(startGoal[1].yaw) * initSpeed,
+                                               std::sin(startGoal[1].yaw) * initSpeed,
+                                               0.0);
+
                 Eigen::Matrix3d iniState;
                 Eigen::Matrix3d finState;
-                iniState << route.front(), Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero();
-                finState << route.back(), Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero();
+                iniState << route.front(), initVel, Eigen::Vector3d::Zero();
+                finState << route.back(), finalVel, Eigen::Vector3d::Zero();
 
                 gcopter::GCOPTER_PolytopeSFC gcopter;
 
-                // magnitudeBounds = [v_max, omg_max, nt_max, nt_min, nn_max, mu_max]^T
+                // magnitudeBounds = [vMax, omgXMax, nnMax, nnMin, muMax, ntMargin, vMin]^T
                 // penaltyWeights = [pos_weight, vel_weight, omg_weight, nt_weight, nn_weight, mu_weight]^T
-                // physicalParams = [vehicle_mass, gravitational_acceleration, horitonral_drag_coeff,
-                //                   vertical_drag_coeff, parasitic_drag_coeff, speed_smooth_factor]^T
-                // initialize some constraint parameters
-                Eigen::VectorXd magnitudeBounds(6);
+                // physicalParams  = [mass, grav, dh, dv, cp, veps, kCL, softMinK]^T
+                Eigen::VectorXd magnitudeBounds(7);
                 Eigen::VectorXd penaltyWeights(6);
-                Eigen::VectorXd physicalParams(6);
+                Eigen::VectorXd physicalParams(8);
                 magnitudeBounds(0) = config.maxVelMag;
                 magnitudeBounds(1) = config.maxBdrMag;
-                magnitudeBounds(2) = config.ntMax;
-                magnitudeBounds(3) = config.ntMin;
-                magnitudeBounds(4) = config.nnMax;
-                magnitudeBounds(5) = config.muMax;
+                magnitudeBounds(2) = config.nnMax;         // nnMax
+                magnitudeBounds(3) = config.nnMin;         // nnMin
+                magnitudeBounds(4) = config.muMax;
+                magnitudeBounds(5) = config.ntMargin;
+                magnitudeBounds(6) = config.minVelMag;     // vMin
                 penaltyWeights(0) = (config.chiVec)[0];
                 penaltyWeights(1) = (config.chiVec)[1];
                 penaltyWeights(2) = (config.chiVec)[2];
@@ -203,10 +277,20 @@ public:
                 physicalParams(3) = config.vertDrag;
                 physicalParams(4) = config.parasDrag;
                 physicalParams(5) = config.speedEps;
+                // kCL = ρ·S·CLmax / (2·m·g)
+                physicalParams(6) = config.rhoAir * config.wingArea * config.CLmax
+                                   / (2.0 * config.vehicleMass * config.gravAcc);
+                physicalParams(7) = config.softMinK;
                 const int quadratureRes = config.integralIntervs;
 
                 traj.clear();
-
+                
+                ROS_WARN("gcopter.setup() starting...");
+                ROS_WARN("hPolys size: %zu", hPolys.size());
+                if (hPolys.size() > 0) {
+                    std::cout << hPolys[0] << std::endl;
+                }
+                
                 if (!gcopter.setup(config.weightT,
                                    iniState, finState,
                                    hPolys, INFINITY,
@@ -216,14 +300,18 @@ public:
                                    penaltyWeights,
                                    physicalParams))
                 {
+                    ROS_WARN("gcopter.setup() returned false! Check states, hPolys, bounds.");
                     return;
                 }
 
+                ROS_WARN("gcopter.optimize() starting...");
                 if (std::isinf(gcopter.optimize(traj, config.relCostTol)))
                 {
+                    ROS_WARN("gcopter.optimize() failed (returned INF)!");
                     return;
                 }
 
+                ROS_WARN("gcopter.optimize() success! PieceNum: %d", traj.getPieceNum());
                 if (traj.getPieceNum() > 0)
                 {
                     trajStamp = ros::Time::now().toSec();
@@ -241,14 +329,36 @@ public:
             {
                 startGoal.clear();
             }
-            const double zGoal = config.mapBound[4] + config.dilateRadius +
-                                 fabs(msg->pose.orientation.z) *
-                                     (config.mapBound[5] - config.mapBound[4] - 2 * config.dilateRadius);
-            const Eigen::Vector3d goal(msg->pose.position.x, msg->pose.position.y, zGoal);
-            if (voxelMap.query(goal) == 0)
+            const double qx = msg->pose.orientation.x;
+            const double qy = msg->pose.orientation.y;
+            const double qz = msg->pose.orientation.z;
+            const double qw = msg->pose.orientation.w;
+            const double siny_cosp = 2.0 * (qw * qz + qx * qy);
+            const double cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz);
+            const double yaw = std::atan2(siny_cosp, cosy_cosp);
+
+            double zGoal = msg->pose.position.z;
+            const double zMin = config.mapBound[4] + config.dilateRadius;
+            const double zMax = config.mapBound[5] - config.dilateRadius;
+            if (zGoal < zMin)
             {
-                visualizer.visualizeStartGoal(goal, 0.5, startGoal.size());
-                startGoal.emplace_back(goal);
+                zGoal = zMin;
+            }
+            if (zGoal > zMax)
+            {
+                zGoal = zMax;
+            }
+
+            GoalState goalState;
+            goalState.pos = Eigen::Vector3d(msg->pose.position.x, msg->pose.position.y, zGoal);
+            goalState.yaw = yaw;
+
+            if (!config.enableObstacle || voxelMap.query(goalState.pos) == 0)
+            {
+                ROS_WARN("Goal Selected: (%f, %f, %f), yaw: %f. Current startGoal size (before adding): %zu",
+                         goalState.pos.x(), goalState.pos.y(), goalState.pos.z(), goalState.yaw, startGoal.size());
+                visualizer.visualizeStartGoal(goalState.pos, 0.5, startGoal.size());
+                startGoal.emplace_back(goalState);
             }
             else
             {
@@ -279,26 +389,26 @@ public:
             const double delta = ros::Time::now().toSec() - trajStamp;
             if (delta > 0.0 && delta < traj.getTotalDuration())
             {
-                double thr;
                 Eigen::Vector4d quat;
                 Eigen::Vector3d omg;
+                double n_t, n_n, mu;
 
                 flatmap.forward(traj.getVel(delta),
                                 traj.getAcc(delta),
                                 traj.getJer(delta),
-                                0.0, 0.0,
-                                thr, quat, omg);
+                                quat, omg, &n_t, &n_n, &mu);
                 double speed = traj.getVel(delta).norm();
                 double bodyratemag = omg.norm();
-                double tiltangle = acos(1.0 - 2.0 * (quat(1) * quat(1) + quat(2) * quat(2)));
-                std_msgs::Float64 speedMsg, thrMsg, tiltMsg, bdrMsg;
+                std_msgs::Float64 speedMsg, ntMsg, nnMsg, muMsg, bdrMsg;
                 speedMsg.data = speed;
-                thrMsg.data = thr;
-                tiltMsg.data = tiltangle;
+                ntMsg.data = n_t;
+                nnMsg.data = n_n;
+                muMsg.data = mu;
                 bdrMsg.data = bodyratemag;
                 visualizer.speedPub.publish(speedMsg);
-                visualizer.thrPub.publish(thrMsg);
-                visualizer.tiltPub.publish(tiltMsg);
+                visualizer.ntPub.publish(ntMsg);
+                visualizer.nnPub.publish(nnMsg);
+                visualizer.muPub.publish(muMsg);
                 visualizer.bdrPub.publish(bdrMsg);
 
                 visualizer.visualizeSphere(traj.getPos(delta),
@@ -313,6 +423,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "global_planning_node");
     ros::NodeHandle nh_;
 
+    ROS_WARN("global_planning_node main start");
     GlobalPlanner global_planner(Config(ros::NodeHandle("~")), nh_);
 
     ros::Rate lr(1000);
