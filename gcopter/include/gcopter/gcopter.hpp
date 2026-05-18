@@ -99,48 +99,48 @@ namespace gcopter
 
     private:
         // ---- 核心模块 ----
-        minco::MINCO_S3NU minco;          ///< MINCO 轨迹参数化 (q,T) ↔ C
-        flatness::FlatnessMap flatmap;     ///< 微分平坦映射 (forward + backward)
+        minco::MINCO_S3NU minco;           // MINCO 轨迹参数化 (q,T) ↔ C
+        flatness::FlatnessMap flatmap;     // 微分平坦映射 (forward + backward)
 
-        double rho;                        ///< 时间最小化权重
-        Eigen::Matrix3d headPVA;           ///< 起点 PVA 边界条件
-        Eigen::Matrix3d tailPVA;           ///< 终点 PVA 边界条件
+        double rho;                        // 时间最小化权重
+        Eigen::Matrix3d headPVA;           // 起点 PVA 边界条件
+        Eigen::Matrix3d tailPVA;           // 终点 PVA 边界条件
 
         // ---- 安全走廊 ----
-        PolyhedraV vPolytopes;             ///< 多面体 V-rep (用于 bijection)
-        PolyhedraH hPolytopes;             ///< 多面体 H-rep (用于约束惩罚)
-        Eigen::Matrix3Xd shortPath;        ///< RRT* 最短路径 (初始航点)
+        PolyhedraV vPolytopes;             // 多面体 V-rep (用于 bijection)
+        PolyhedraH hPolytopes;             // 多面体 H-rep (用于约束惩罚)
+        Eigen::Matrix3Xd shortPath;        // RRT* 最短路径 (初始航点)
 
         // ---- 段分配 ----
-        Eigen::VectorXi pieceIdx;          ///< 每段走廊包含的轨迹段数
-        Eigen::VectorXi vPolyIdx;          ///< 每个航点对应的 V-多面体索引
-        Eigen::VectorXi hPolyIdx;          ///< 每段轨迹对应的 H-多面体索引
+        Eigen::VectorXi pieceIdx;          // 每段走廊包含的轨迹段数
+        Eigen::VectorXi vPolyIdx;          // 每个航点对应的 V-多面体索引
+        Eigen::VectorXi hPolyIdx;          // 每段轨迹对应的 H-多面体索引
 
-        int polyN;                         ///< 走廊多面体数
-        int pieceN;                        ///< 轨迹总段数
+        int polyN;                         // 走廊多面体数
+        int pieceN;                        // 轨迹总段数
 
-        int spatialDim;                    ///< ξ 的维度 (空间自由度)
-        int temporalDim;                   ///< τ 的维度 (时间自由度)
+        int spatialDim;                    // ξ 的维度 (空间自由度)
+        int temporalDim;                   // τ 的维度 (时间自由度)
 
         // ---- 优化参数 ----
-        double smoothEps;                  ///< 平滑 L1 惩罚的平滑因子
-        int integralRes;                   ///< 每段轨迹的采样点数
-        Eigen::VectorXd magnitudeBd;       ///< [0:vMax, 1:omgXMax, 2:nnMax, 3:nnMin, 4:muMax, 5:ntMargin, 6:vMin]
-        Eigen::VectorXd penaltyWt;         ///< [pos, vel, omg, nt, nn, mu] 各约束权重
-        Eigen::VectorXd physicalPm;        ///< [0:mass, 1:grav, 2:dh, 3:dv, 4:cp, 5:veps, 6:kCL, 7:softMinK, 8:vMin?]
-        double allocSpeed;                 ///< 初始时间分配速度
+        double smoothEps;                  // 平滑 L1 惩罚的平滑因子
+        int integralRes;                   // 每段轨迹的采样点数
+        Eigen::VectorXd magnitudeBd;       // [0:vMax, 1:omgXMax, 2:nnMax, 3:nnMin, 4:muMax, 5:ntMargin, 6:vMin]
+        Eigen::VectorXd penaltyWt;         // [pos, vel, omg, nt, nn, mu] 各约束权重
+        Eigen::VectorXd physicalPm;        // [0:mass, 1:grav, 2:dh, 3:dv, 4:cp, 5:veps, 6:kCL, 7:softMinK, 8:vMin?]
+        double allocSpeed;                 // 初始时间分配速度
 
         // ---- L-BFGS 配置与中间缓存 ----
         lbfgs::lbfgs_parameter_t lbfgs_params;
 
-        Eigen::Matrix3Xd points;           ///< 中间航点 q
-        Eigen::VectorXd times;             ///< 段时间 T
+        Eigen::Matrix3Xd points;           // 中间航点 q
+        Eigen::VectorXd times;             // 段时间 T
         // 阶段 B 输出: MINCO 伴随求解后的梯度 (对航点 q 和时间 T)
-        Eigen::Matrix3Xd gradByPoints;           ///< ∂J/∂q
-        Eigen::VectorXd gradByTimes;             ///< ∂J/∂T
+        Eigen::Matrix3Xd gradByPoints;           // ∂J/∂q
+        Eigen::VectorXd gradByTimes;             // ∂J/∂T
         // 阶段 A 输出: 采样点积分得到的梯度 (对系数 C 和时间 T, 伴随前)
-        Eigen::MatrixX3d partialGradByCoeffs;    ///< ∂J/∂C
-        Eigen::VectorXd partialGradByTimes;      ///< ∂J/∂T
+        Eigen::MatrixX3d partialGradByCoeffs;    // ∂J/∂C
+        Eigen::VectorXd partialGradByTimes;      // ∂J/∂T
 
     private:
         // ================================================================

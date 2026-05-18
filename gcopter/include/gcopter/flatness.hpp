@@ -122,6 +122,18 @@ namespace flatness
             // 气流系 Z 轴：在对称平面内指向下方，由右手法则 X x Y = Z 补全
             Eigen::Vector3d k_a = i_a.cross(j_a);
 
+            // ======= 方向一致性修正 =======
+            // 确保 k_a 始终指向下方 (k_a(2) > 0 in NED)，防止平坦度映射产生倒飞姿态。
+            // 若 k_a(2) < 0，说明 v×a_g 方向翻转导致基向量倒置（机腹朝天）。
+            // 翻转 j_a 和 k_a，等价于绕 i_a 轴旋转 180°，将"倒飞正G"正确映射为"正飞负G"。
+            bool j_k_flipped = false;
+            if (k_a(2) < 0.0)
+            {
+                j_a = -j_a;
+                k_a = -k_a;
+                j_k_flipped = true;
+            }
+
             // ======= 2. 姿态四元数计算 =======
             // R 为气流系到大地系的方向余弦矩阵，列向量分别为 i_a, j_a, k_a 在大地系中的投影
             // R 属于 SO(3)，可以通过 Eigen 的函数直接转换为四元数表示的姿态
@@ -147,6 +159,12 @@ namespace flatness
             double cross_dot_inner = v_times_ag.dot(v_times_ag_dot);
             // d/dt (c / ||c||) = (c_dot * ||c|| - c * (c · c_dot) / ||c||) / ||c||^2
             Eigen::Vector3d j_a_dot = (v_times_ag_dot * v_times_ag_norm - v_times_ag * cross_dot_inner * v_times_ag_inv) * (v_times_ag_inv * v_times_ag_inv);
+
+            // 若 j_a/k_a 被翻转，j_a_dot (作为 j_a 的时间导数) 也需对应翻转
+            if (j_k_flipped)
+            {
+                j_a_dot = -j_a_dot;
+            }
 
             // 气流轴系 Z 轴 (k_a) 的时间导数在大地系下的投影不需要，故不计算
 
@@ -760,11 +778,37 @@ namespace flatness
                              Eigen::Vector3d &acc_total_grad,
                              Eigen::Vector3d &jer_total_grad) const
         {
+            // ---- 步骤 0: 方向一致性检测（与 forward 保持一致） ----
+            // 若 forward 翻转了 j_a/k_a，则上游梯度需做对应变换后
+            // 再传入核心 backward，确保链式法则自洽。
+            double dJ_dnn_adj = dJ_dnn;
+            Eigen::Vector3d dJ_domg_adj = dJ_domg;
+            {
+                const Eigen::Vector3d a_g = a - Eigen::Vector3d(0.0, 0.0, grav);
+                const Eigen::Vector3d v_times_ag = v.cross(a_g);
+                const double v_norm = v.norm();
+                const double v_times_ag_norm = v_times_ag.norm();
+                const Eigen::Vector3d j_a_ck = v_times_ag / (v_times_ag_norm + 1e-6);
+                const Eigen::Vector3d k_a_ck = (v / (v_norm + 1e-6)).cross(j_a_ck);
+                if (k_a_ck(2) < 0.0)
+                {
+                    // forward 翻转 → 上游梯度变换：
+                    //   n_n_f = -n_n_u   →  dJ_dnn_u = -dJ_dnn_f
+                    //   omg_f = [omg_u0, -omg_u1, -omg_u2]
+                    //        →  dJ_domg_u = [d0, -d1, -d2]
+                    //   mu_f = mu_u ± π  →  dJ_dmu 不变
+                    //   n_t 不变
+                    dJ_dnn_adj = -dJ_dnn;
+                    dJ_domg_adj.y() = -dJ_domg.y();
+                    dJ_domg_adj.z() = -dJ_domg.z();
+                }
+            }
+
             // ---- 步骤 1: 调用核心 backward 获取控制→轨迹的链式梯度 ----
             // grad_v_chain, grad_a_chain, grad_j_chain 分别对应 ∂J/∂v, ∂J/∂a, ∂J/∂jer
             // 由 dJ_dnt, dJ_dnn, dJ_dmu, dJ_domg 通过解析雅可比链式求得
             backward(v, a, jer,
-                     dJ_dnt, dJ_dnn, dJ_dmu, dJ_domg,
+                     dJ_dnt, dJ_dnn_adj, dJ_dmu, dJ_domg_adj,
                      vel_total_grad, acc_total_grad, jer_total_grad);
 
             // ---- 步骤 2: 位置梯度直接传递 (位置不出现在平坦度映射中) ----
