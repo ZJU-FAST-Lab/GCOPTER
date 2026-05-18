@@ -188,7 +188,7 @@ Visualization Manager:
       Topic: /initialpose
       X std deviation: 0.5
       Y std deviation: 0.5
-    - Class: rviz/SetGoal
+    - Class: rviz::Goal3DTool
       Topic: /move_base_simple/goal
     - Class: rviz/PublishPoint
       Single click: true

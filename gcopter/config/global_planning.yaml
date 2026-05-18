@@ -13,7 +13,7 @@ VoxelWidth:                 0.25                   # 体素尺寸 (m)
 MapBound:                   [-25.0, 25.0, -25.0, 25.0, 0.0, 5.0]  # [xmin,xmax,ymin,ymax,zmin,zmax]
 
 # ---- RRT 路径搜索 ----
-EnableObstacle:             false                   # true=有障碍(RRT+SFC), false=仅地面约束+边界框
+EnableObstacle:             false                  # true=有障碍(RRT+SFC), false=仅地面约束+边界框
 TimeoutRRT:                 0.02                   # RRT 规划超时 (s) (EnableObstacle=false 时忽略)
 
 # ---- 动力学约束 ----
