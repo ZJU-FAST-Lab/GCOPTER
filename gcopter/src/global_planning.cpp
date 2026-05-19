@@ -610,7 +610,7 @@ public:
      *      - /nt:      切向过载 (g)
      *      - /nn:      法向过载 (g)
      *      - /mu:      滚转角 (rad)
-     *      - /bdr:     体轴角速度模长 (rad/s)
+     *      - /bdr:     体轴 x 滚转速率 ω_x (rad/s, 带符号)
      *   ③ 可视化轨迹跟踪球: 显示飞机当前位置
      *
      * @note 仅当 traj 有效且当前时间在轨迹持续时间内才发布数据。
@@ -646,7 +646,7 @@ public:
                                 traj.getJer(delta),
                                 quat, omg, &n_t, &n_n, &mu);
                 double speed = traj.getVel(delta).norm();
-                double bodyratemag = omg.norm();
+                double bodyrate_x = omg(0);  // 体轴 x 滚转速率 (带符号)
 
                 // ---- 发布遥测数据 ----
                 std_msgs::Float64 speedMsg, ntMsg, nnMsg, muMsg, bdrMsg;
@@ -654,7 +654,7 @@ public:
                 ntMsg.data = n_t;
                 nnMsg.data = n_n;
                 muMsg.data = mu;
-                bdrMsg.data = bodyratemag;
+                bdrMsg.data = bodyrate_x;
                 visualizer.speedPub.publish(speedMsg);
                 visualizer.ntPub.publish(ntMsg);
                 visualizer.nnPub.publish(nnMsg);
@@ -678,6 +678,7 @@ public:
 //    ③ 1000 Hz 循环: process() + spinOnce()
 //
 //  节点退出: Ctrl+C  → ros::ok() = false → 正常退出
+//
 // ================================================================
 int main(int argc, char **argv)
 {
