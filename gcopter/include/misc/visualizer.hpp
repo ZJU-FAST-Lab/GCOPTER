@@ -17,16 +17,19 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
-// Visualizer for the planner
+/**
+ * @brief RViz 可视化工具类
+ *
+ * 负责发布轨迹、航点、走廊网格、以及简单球体标记，
+ * 用于快速检查规划结果与环境约束。
+ */
 class Visualizer
 {
 private:
-    // config contains the scale for some markers
+    // ROS 节点句柄
     ros::NodeHandle nh;
 
-    // These are publishers for path, waypoints on the trajectory,
-    // the entire trajectory, the mesh of free-space polytopes,
-    // the edge of free-space polytopes, and spheres for safety radius
+    // 轨迹与环境可视化发布器
     ros::Publisher routePub;
     ros::Publisher wayPointsPub;
     ros::Publisher trajectoryPub;
@@ -35,6 +38,7 @@ private:
     ros::Publisher spherePub;
 
 public:
+    // 遥测标量发布器
     ros::Publisher speedPub;
     ros::Publisher ntPub;
     ros::Publisher nnPub;
@@ -42,6 +46,10 @@ public:
     ros::Publisher bdrPub;
 
 public:
+    /**
+     * @brief 构造并注册全部可视化话题
+     * @param nh_ ROS 节点句柄
+     */
     Visualizer(ros::NodeHandle &nh_)
         : nh(nh_)
     {
@@ -58,7 +66,11 @@ public:
         bdrPub = nh.advertise<std_msgs::Float64>("/visualizer/body_rate", 1000);
     }
 
-    // Visualize the trajectory and its front-end path
+    /**
+     * @brief 可视化轨迹及其前端路径
+     * @param traj  已优化的轨迹
+     * @param route 前端路径 (折线)
+     */
     template <int D>
     inline void visualize(const Trajectory<D> &traj,
                           const std::vector<Eigen::Vector3d> &route)
@@ -163,7 +175,10 @@ public:
         }
     }
 
-    // Visualize some polytopes in H-representation
+    /**
+     * @brief 可视化 H-表示的多面体走廊 (三角面片 + 边线)
+     * @param hPolys 多面体集合
+     */
     inline void visualizePolytope(const std::vector<Eigen::MatrixX4d> &hPolys)
     {
 
@@ -252,7 +267,11 @@ public:
         return;
     }
 
-    // Visualize all spheres with centers sphs and the same radius
+    /**
+     * @brief 以球体标记显示单个点
+     * @param center 球心
+     * @param radius 球半径
+     */
     inline void visualizeSphere(const Eigen::Vector3d &center,
                                 const double &radius)
     {
@@ -286,6 +305,12 @@ public:
         spherePub.publish(sphereMarkers);
     }
 
+    /**
+     * @brief 显示起点/终点球体标记
+     * @param center 球心
+     * @param radius 球半径
+     * @param sg 0=起点, 1=终点 (或任意 ID)
+     */
     inline void visualizeStartGoal(const Eigen::Vector3d &center,
                                    const double &radius,
                                    const int sg)
