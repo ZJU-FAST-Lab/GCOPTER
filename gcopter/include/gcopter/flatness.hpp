@@ -127,7 +127,7 @@ namespace flatness
             // 若 k_a(2) < 0，说明 v×a_g 方向翻转导致基向量倒置（机腹朝天）。
             // 翻转 j_a 和 k_a，等价于绕 i_a 轴旋转 180°，将"倒飞正G"正确映射为"正飞负G"。
             bool j_k_flipped = false;
-            if (k_a(2) < 0.0)
+            if (k_a(2) <= 0.0)
             {
                 j_a = -j_a;
                 k_a = -k_a;
@@ -181,9 +181,7 @@ namespace flatness
             double n_n = -a_g.dot(k_a) / grav;
             // mu: 速度滚转角
             // 航迹系与气流系共用x轴(速度方向)，因此航迹系到气流系只需绕x轴转过速度滚转角 \mu。
-            // 由于航迹系y轴始终在水平面内，气流系的 j_a 和 k_a 向量在大地系 Z 轴(重力铅锤方向)的投影
             // 即 j_a(2) 和 k_a(2) 天然正比于 \sin\mu 和 \cos\mu (比例系数为 \cos\gamma)。
-            // 此方法优雅地将物理定义映射到了几何投影，也交由 atan2 安全处理了垂直俯冲/爬升 (\cos\gamma = 0) 的死锁点
             double mu = std::atan2(j_a(2), k_a(2));
 
             // ======= 5. 组装并返回平坦度输出转换结果 =======

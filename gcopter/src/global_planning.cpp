@@ -519,7 +519,10 @@ public:
                 if (traj.getPieceNum() > 0)
                 {
                     trajStamp = ros::Time::now().toSec();
+                    ROS_WARN("[DIAG] trajStamp=%.3f totalDur=%.3fs pieceNum=%d",
+                             trajStamp, traj.getTotalDuration(), traj.getPieceNum());
                     visualizer.visualize(traj, route);
+                    ROS_WARN("[DIAG] visualize done");
                 }
             }
         }
@@ -634,6 +637,13 @@ public:
         if (traj.getPieceNum() > 0)
         {
             const double delta = ros::Time::now().toSec() - trajStamp;
+            static bool firstEntry = true;
+            if (firstEntry)
+            {
+                ROS_WARN("[DIAG] process() first valid entry: delta=%.4f totalDur=%.4f stamp=%.3f now=%.3f",
+                         delta, traj.getTotalDuration(), trajStamp, ros::Time::now().toSec());
+                firstEntry = false;
+            }
             if (delta > 0.0 && delta < traj.getTotalDuration())
             {
                 Eigen::Vector4d quat;    // [qw, qx, qy, qz]
@@ -641,12 +651,36 @@ public:
                 double n_t, n_n, mu;     // 切向过载, 法向过载, 滚转角
 
                 // ---- 微分平坦正向映射: 轨迹状态 → 控制量 ----
-                flatmap.forward(traj.getVel(delta),
-                                traj.getAcc(delta),
-                                traj.getJer(delta),
+                Eigen::Vector3d vel_now = traj.getVel(delta);
+                Eigen::Vector3d acc_now = traj.getAcc(delta);
+                Eigen::Vector3d jer_now = traj.getJer(delta);
+                flatmap.forward(vel_now, acc_now, jer_now,
                                 quat, omg, &n_t, &n_n, &mu);
-                double speed = traj.getVel(delta).norm();
+                double speed = vel_now.norm();
                 double bodyrate_x = omg(0);  // 体轴 x 滚转速率 (带符号)
+
+                // ---- 诊断输出 (10 Hz, 前半秒密集) ----
+                static double lastDiagTime = -1.0;
+                if (delta < 0.5 && delta - lastDiagTime > 0.1)
+                {
+                    lastDiagTime = delta;
+                    // 手工计算 j_a, k_a 以核对符号
+                    Eigen::Vector3d a_g = acc_now;
+                    a_g(2) -= config.gravAcc;
+                    Eigen::Vector3d v_times_ag = vel_now.cross(a_g);
+                    double vta_norm = v_times_ag.norm();
+                    Eigen::Vector3d j_a = v_times_ag / (vta_norm + 1e-6);
+                    Eigen::Vector3d i_a = vel_now / (speed + 1e-6);
+                    Eigen::Vector3d k_a = i_a.cross(j_a);
+                    double gamma = std::asin(-vel_now.z() / (speed + 1e-6)); // 航迹倾角
+                    ROS_INFO("[DIAG] t=%.3f mu=%.4f(%.1f°) omg_x=%.4f omg_y=%.4f omg_z=%.4f |omg|=%.4f "
+                             "j_a.z=%.4f k_a.z=%.4f k_a_flip=%d "
+                             "acc_y=%.3f gamma=%.1f°",
+                             delta, mu, mu*180.0/M_PI,
+                             omg(0), omg(1), omg(2), omg.norm(),
+                             j_a(2), k_a(2), (int)(k_a(2)<=0.0),
+                             acc_now.y(), gamma*180.0/M_PI);
+                }
 
                 // ---- 发布遥测数据 ----
                 std_msgs::Float64 speedMsg, ntMsg, nnMsg, muMsg, bdrMsg;
