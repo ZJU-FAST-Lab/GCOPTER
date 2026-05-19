@@ -53,7 +53,7 @@ SpeedEps:                   0.0001                 # 速度平滑因子 (防除�
 
 # ---- 轨迹优化参数 ----
 WeightT:                    20.0                   # 时间最小化权重 ρ, J += ρ·ΣT
-ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5]  # 6元惩罚权重: [pos, vel, ω, n_t, n_n, μ]
+ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5, 1.0e+5, 1.0e+5]  # 8元惩罚权重: [pos, vel, ω, n_t, n_n, μ, μ_bnd, ω_bnd]
 SmoothingEps:               1.0e-2                 # 平滑L1过渡区宽度 μ, 越小越接近硬约束
 IntegralIntervs:            16                     # 每段采样点数 (配点=points+1)
 RelCostTol:                 1.0e-5                 # L-BFGS 收敛容限 (相对代价下降)

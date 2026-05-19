@@ -130,7 +130,7 @@ struct Config
 
     // ---- 优化器参数 ----
     double weightT;            // 时间最小化权重 ρ (见 gcopter.hpp costFunctional)
-    std::vector<double> chiVec; // 6 元素惩罚权重: [pos, vel, omg, nt, nn, mu]
+    std::vector<double> chiVec; // 8 元素惩罚权重: [pos, vel, omg, nt, nn, mu, muBnd, omgBnd]
     double smoothingEps;       // 平滑 L1 惩罚的过渡区宽度
     int integralIntervs;       // 每段轨迹配点采样数 (积分分辨率)
     double relCostTol;         // L-BFGS 相对代价收敛容限
@@ -455,7 +455,7 @@ public:
                 //  physicalParams  = [mass, grav, dh, dv, cp, veps, kCL, softMinK]^T
                 // ============================================================
                 Eigen::VectorXd magnitudeBounds(7);
-                Eigen::VectorXd penaltyWeights(6);
+                Eigen::VectorXd penaltyWeights(8);
                 Eigen::VectorXd physicalParams(8);
                 magnitudeBounds(0) = config.maxVelMag;
                 magnitudeBounds(1) = config.maxBdrMag;
@@ -470,6 +470,8 @@ public:
                 penaltyWeights(3) = (config.chiVec)[3];  // 切向过载权重
                 penaltyWeights(4) = (config.chiVec)[4];  // 法向过载权重
                 penaltyWeights(5) = (config.chiVec)[5];  // 滚转角权重
+                penaltyWeights(6) = (config.chiVec)[6];  // 边界 μ→0 权重
+                penaltyWeights(7) = (config.chiVec)[7];  // 边界 ω→0 权重
                 physicalParams(0) = config.vehicleMass;
                 physicalParams(1) = config.gravAcc;
                 physicalParams(2) = config.horizDrag;

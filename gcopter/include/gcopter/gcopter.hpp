@@ -588,6 +588,8 @@ namespace gcopter
             const double weightNt = penaltyWeights(3);
             const double weightNn = penaltyWeights(4);
             const double weightMu = penaltyWeights(5);
+            const double weightMuBnd = penaltyWeights(6);  // 边界 μ→0 权重
+            const double weightOmgBnd = penaltyWeights(7); // 边界 ω→0 权重
 
             // ---- 气动参数拆箱 ----
             const double kCL = physicalPm(6);     // = ρ·S·CLmax/(2·m·g)
@@ -762,6 +764,25 @@ namespace gcopter
                     {
                         dJ_dmu += weightMu * violaMuPenaD * 2.0 * mu;
                         pena += weightMu * violaMuPena;
+                    }
+
+                    // ---- ③g 起止点姿态约束: μ→0, ω→0 @ t=0 & t=T ----
+                    if ((i == 0 && j == 0) || (i == pieceNum - 1 && j == integralResolution))
+                    {
+                        // μ→0 惩罚
+                        double violaMuBnd = mu * mu;
+                        if (smoothedL1(violaMuBnd, smoothFactor, violaMuPena, violaMuPenaD))
+                        {
+                            dJ_dmu += weightMuBnd * violaMuPenaD * 2.0 * mu;
+                            pena += weightMuBnd * violaMuPena;
+                        }
+                        // ω→0 惩罚 (全三轴)
+                        double violaOmgBnd = omg.squaredNorm();
+                        if (smoothedL1(violaOmgBnd, smoothFactor, violaOmgPena, violaOmgPenaD))
+                        {
+                            gradOmg += weightOmgBnd * violaOmgPenaD * 2.0 * omg;
+                            pena += weightOmgBnd * violaOmgPena;
+                        }
                     }
 
                     // ---- ④ backward: 控制/状态梯度 → 轨迹梯度 ----
