@@ -28,34 +28,6 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: GlobalMap
-  - Class: rviz/Displays
-    Help Height: 78
-    Name: Displays
-    Property Tree Widget:
-      Expanded:
-        - /GlobalMap1
-        - /GlobalMap1/GlobalMap1
-        - /GlobalMap1/GlobalMap1/Autocompute Value Bounds1
-      Splitter Ratio: 0.5
-    Tree Height: 363
-  - Class: rviz/Tool Properties
-    Expanded: ~
-    Name: Tool Properties
-    Splitter Ratio: 0.6555560231208801
-  - Class: rviz/Views
-    Expanded:
-      - /Current View1
-    Name: Views
-    Splitter Ratio: 0.5
-  - Class: rviz/Tool Properties
-    Expanded: ~
-    Name: Tool Properties
-    Splitter Ratio: 0.5
-  - Class: rviz/Views
-    Expanded:
-      - /Current View1
-    Name: Views
-    Splitter Ratio: 0.5
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -188,7 +160,7 @@ Visualization Manager:
       Topic: /initialpose
       X std deviation: 0.5
       Y std deviation: 0.5
-    - Class: rviz/SetGoal
+    - Class: rviz::Goal3DTool
       Topic: /move_base_simple/goal
     - Class: rviz/PublishPoint
       Single click: true
@@ -214,7 +186,7 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.009999999776482582
       Pitch: 0.9497969150543213
-      Target Frame: drone1
+      Target Frame: odom
       Yaw: 2.6666667461395264
     Saved:
       - Class: rviz/ThirdPersonFollower
@@ -235,7 +207,7 @@ Visualization Manager:
         Name: ThirdPersonFollower
         Near Clip Distance: 0.009999999776482582
         Pitch: 0.15354639291763306
-        Target Frame: drone1
+        Target Frame: odom
         Yaw: 3.1068692207336426
       - Class: rviz/Orbit
         Distance: 14.031325340270996
@@ -255,7 +227,7 @@ Visualization Manager:
         Name: Orbit
         Near Clip Distance: 0.009999999776482582
         Pitch: 1.0697968006134033
-        Target Frame: map
+        Target Frame: odom
         Yaw: 4.538923740386963
       - Class: rviz/Orbit
         Distance: 13.27771282196045
@@ -275,7 +247,7 @@ Visualization Manager:
         Name: Orbit
         Near Clip Distance: 0.009999999776482582
         Pitch: 1.1547964811325073
-        Target Frame: map
+        Target Frame: odom
         Yaw: 6.054520606994629
       - Class: rviz/ThirdPersonFollower
         Distance: 10.391033172607422
@@ -295,7 +267,7 @@ Visualization Manager:
         Name: ThirdPersonFollower
         Near Clip Distance: 0.009999999776482582
         Pitch: 0.6947967410087585
-        Target Frame: drone1
+        Target Frame: odom
         Yaw: 2.7186548709869385
       - Class: rviz/ThirdPersonFollower
         Distance: 22.49183464050293
@@ -315,7 +287,7 @@ Visualization Manager:
         Name: ThirdPersonFollower
         Near Clip Distance: 0.009999999776482582
         Pitch: 1.0247968435287476
-        Target Frame: drone1
+        Target Frame: odom
         Yaw: 3.1827449798583984
       - Class: rviz/ThirdPersonFollower
         Distance: 22.4423770904541
@@ -335,7 +307,7 @@ Visualization Manager:
         Name: ThirdPersonFollower
         Near Clip Distance: 0.009999999776482582
         Pitch: 0.8597970008850098
-        Target Frame: drone1
+        Target Frame: odom
         Yaw: 3.265840530395508
 Window Geometry:
   Displays:

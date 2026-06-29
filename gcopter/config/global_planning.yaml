@@ -1,43 +1,59 @@
-MapTopic:                   '/voxel_map'
+# ============================================================================
+#  GCOPTER 固定翼全局规划配置文件
+#  轨迹优化参数 + 飞行器物理参数 + 气动约束参数
+# ============================================================================
 
-TargetTopic:                '/move_base_simple/goal'
+# ---- ROS 通信 ----
+MapTopic:                   '/voxel_map'           # 输入: 3D占据栅格地图话题
+TargetTopic:                '/move_base_simple/goal' # 输入: 目标点话题
 
-DilateRadius:               0.5
+# ---- 地图预处理 ----
+DilateRadius:               0.5                    # 占据栅格膨胀半径 (m)
+VoxelWidth:                 0.25                   # 体素尺寸 (m)
+MapBound:                   [-25.0, 25.0, -25.0, 25.0, 0.0, 5.0]  # [xmin,xmax,ymin,ymax,zmin,zmax]
 
-VoxelWidth:                 0.25
+# ---- RRT 路径搜索 ----
+EnableObstacle:             false                  # true=有障碍(RRT+SFC), false=仅地面约束+边界框
+TimeoutRRT:                 0.02                   # RRT 规划超时 (s) (EnableObstacle=false 时忽略)
 
-MapBound:                   [-25.0, 25.0, -25.0, 25.0, 0.0, 5.0]
+# ---- 动力学约束 ----
+MinVelMag:                  5.0                    # 最小空速 (m/s), |v| ≥ vMin (固定翼防失速), 对应 magnitudeBd[6]
+MaxVelMag:                  30.0                   # 最大空速 (m/s), |v| ≤ vMax, 对应 magnitudeBd[0]
+MaxBdrMag:                  0.52                   # 最大滚转角速度 |ω_x| ≤ ωMax (rad/s, 仅x轴), 对应 magnitudeBd[1]
 
-TimeoutRRT:                 0.02
+# ---- 固定翼过载/姿态约束 ----
+#   V-N 图 (法向过载包线): nnMin(V) ≤ n_n ≤ nnMax(V)
+#     nnMax(V) = softMin( kCL·V² , NnStructMax, SoftMinK )
+#       - 低 V 段: kCL·V² = (ρ·S·CLmax)/(2mg) · V²  — 最大升力系数限制
+#       - 高 V 段: NnStructMax                   — 机体结构强度限制
+#     nnMin(V) = -softMin( kCL·V² , |NnMin|, SoftMinK )
+#       - 低 V 段: -kCL·V²                       — 负升力系数限制 (倒飞/外筋斗)
+#       - 高 V 段: NnMin (<0)                    — 负过载结构限制
+#   SEP 图 (切向过载包线): ntMin(V,n_n) ≤ n_t ≤ ntMax(V,n_n)
+#     ntMax = SEP_full(V,n_n)/V - NtMargin         — 满油门剩余功率上限
+#     ntMin = SEP_min (V,n_n)/V - NtMargin         — 最低油门剩余功率下限
+MuMax:                      1.5                    # 最大速度滚转角 (rad), |μ| ≤ μMax
+NnMax:                      4.0                    # V-N 图结构过载上限 (g), NnStructMax
+NnMin:                      -2.0                   # V-N 图结构过载下限 (g, 负值=倒飞/外筋斗)
+SoftMinK:                   20.0                   # V-N 软过渡锐度 (k>0, 典型值 5~50; 越大越接近硬 min)
 
-MaxVelMag:                  4.0
+# ---- 固定翼气动参数 ----
+CLmax:                      1.4                    # 最大升力系数
+WingArea:                   0.247                  # 翼面积 (m²)
+RhoAir:                     1.225                  # 空气密度 (kg/m³)
+NtMargin:                   0.05                   # SEP 安全裕度 (g), 防止 ntMax≈0 导致不可行
 
-MaxBdrMag:                  2.1
+# ---- 飞行器物理参数 ----
+VehicleMass:                0.88                   # 质量 (kg)
+GravAcc:                    9.8                    # 重力加速度 (m/s², NED: +)
+HorizDrag:                  0.70                   # 水平气动阻力系数 (未使用)
+VertDrag:                   0.80                   # 垂直气动阻力系数 (未使用)
+ParasDrag:                  0.01                   # 寄生阻力系数 (未使用)
+SpeedEps:                   0.0001                 # 速度平滑因子 (防除零, 未使用)
 
-MaxTiltAngle:               1.05
-
-MinThrust:                  2.0
-
-MaxThrust:                  12.0
-
-VehicleMass:                0.61
-
-GravAcc:                    9.8
-
-HorizDrag:                  0.70
-
-VertDrag:                   0.80
-
-ParasDrag:                  0.01
-
-SpeedEps:                   0.0001
-
-WeightT:                    20.0
-
-ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5]
-
-SmoothingEps:               1.0e-2
-
-IntegralIntervs:            16
-
-RelCostTol:                 1.0e-5
+# ---- 轨迹优化参数 ----
+WeightT:                    20.0                   # 时间最小化权重 ρ, J += ρ·ΣT
+ChiVec:                     [1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+4, 1.0e+5, 1.0e+5, 1.0e+5]  # 8元惩罚权重: [pos, vel, ω, n_t, n_n, μ, μ_bnd, ω_bnd]
+SmoothingEps:               1.0e-2                 # 平滑L1过渡区宽度 μ, 越小越接近硬约束
+IntegralIntervs:            16                     # 每段采样点数 (配点=points+1)
+RelCostTol:                 1.0e-5                 # L-BFGS 收敛容限 (相对代价下降)

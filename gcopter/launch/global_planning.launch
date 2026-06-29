@@ -6,9 +6,11 @@
   </node>
   
   <node name="pos_vel_plot" pkg="rqt_plot" type="rqt_plot" 
-    args="/visualizer/speed /visualizer/total_thrust /visualizer/tilt_angle /visualizer/body_rate">
+    args="/visualizer/speed /visualizer/tangential_load /visualizer/normal_load /visualizer/roll_angle /visualizer/body_rate">
   </node>
 
+  <!-- 无障碍模式: 注释掉下面 mockamap_node 即可 -->
+  <!--
   <node pkg="mockamap" type="mockamap_node" name="mockamap_node" output="screen">
   <param name="seed" type="int" value="1024"/>
   <param name="update_freq" type="double" value="1.0"/>
@@ -23,6 +25,7 @@
   <param name="attenuation"   type="double" value="0.1"/>
   <remap from="/mock_map" to="/voxel_map"/>
   </node>
+  -->
   
   <node pkg="gcopter" type="global_planning" name="global_planning_node" output="screen">
   <rosparam file="$(find gcopter)/config/global_planning.yaml" command="load" />
