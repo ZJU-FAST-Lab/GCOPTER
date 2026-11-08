@@ -1037,7 +1037,7 @@ namespace quickhull
             Plane<T> trianglePlane(N, baseTriangleVertices[0]);
             for (size_t i = 0; i < vCount; i++)
             {
-                const T d = abs(mathutils::getSignedDistanceToPlane(m_vertexData[i], trianglePlane));
+                const T d = std::abs(mathutils::getSignedDistanceToPlane(m_vertexData[i], trianglePlane));
                 if (d > maxD)
                 {
                     maxD = d;
